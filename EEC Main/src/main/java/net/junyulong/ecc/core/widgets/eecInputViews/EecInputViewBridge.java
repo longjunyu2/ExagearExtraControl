@@ -10,5 +10,7 @@ public interface EecInputViewBridge extends EecInputViewEditableInterface {
 
     boolean removeSelectedView(EecInputViewInterface overlay);
 
+    EecInputViewStatus getParentStatus();
+
     EecInputViewDeployer getViewDeployer();
 }

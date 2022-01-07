@@ -131,6 +131,11 @@ public class EecTSControllerView extends FrameLayout implements EecInputViewInte
     }
 
     @Override
+    public EecInputViewStatus getParentStatus() {
+        return null;
+    }
+
+    @Override
     public EecInputViewDeployer getViewDeployer() {
         return mViewDeployer;
     }
