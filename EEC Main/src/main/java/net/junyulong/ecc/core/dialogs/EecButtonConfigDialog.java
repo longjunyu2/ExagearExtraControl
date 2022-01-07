@@ -22,10 +22,13 @@ public class EecButtonConfigDialog extends EecBaseDialog implements EecInputView
 
     private EecInputViewType overlayType;
 
-    public EecButtonConfigDialog(Context context, EecInputViewParentInterface parent) {
+    private final Type dialogType;
+
+    public EecButtonConfigDialog(Context context, EecInputViewParentInterface parent, Type type) {
         super(context);
         mParent = parent;
         this.mContext = context;
+        this.dialogType = type;
     }
 
     @Override
@@ -45,4 +48,10 @@ public class EecButtonConfigDialog extends EecBaseDialog implements EecInputView
             this.overlayType = EecInputViewType.EecJoystick;
         this.show();
     }
+
+    public enum Type {
+        Edit,
+        Create
+    }
+
 }

@@ -137,7 +137,9 @@ public class EecTSControllerView extends FrameLayout implements EecInputViewInte
 
     @Override
     public void editView(EecInputViewInterface inputViewInterface) {
-        new EecButtonConfigDialog(this.getContext(), this).editView(inputViewInterface);
+        currentButtonConfigDialog = new EecButtonConfigDialog(this.getContext(), this,
+                EecButtonConfigDialog.Type.Edit);
+        currentButtonConfigDialog.editView(inputViewInterface);
     }
 
     private void createRightToolbar() {
