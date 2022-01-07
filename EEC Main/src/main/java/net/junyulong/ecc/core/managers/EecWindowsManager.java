@@ -51,4 +51,22 @@ public class EecWindowsManager {
         return heightPx / getMinimalCellCounts();
     }
 
+    // Px值转Dp值
+    public int getPxFromDp(float dpValue) {
+        final float scale = displayMetrics.density;
+        return (int) (dpValue * scale);
+    }
+
+    // Dp转Px
+    public float getDpFromPx(float pxValue) {
+        final float scale = displayMetrics.density;
+        return (pxValue / scale);
+    }
+
+    // Sp转Px
+    public int getPxFromSp(float spValue) {
+        final float fontScale = displayMetrics.scaledDensity;
+        return (int) (spValue * fontScale + 0.5f);
+    }
+
 }
