@@ -11,6 +11,7 @@ public class LocalStrings {
     public static String Yes;
     public static String No;
     public static String Success;
+    public static String Please_Enable_Edit_Mode;
 
     public static void initialize(Lang lang) {
         switch (lang) {
@@ -29,6 +30,7 @@ public class LocalStrings {
         Yes = "是";
         No = "否";
         Success = "成功";
+        Please_Enable_Edit_Mode = "请先开启编辑模式";
     }
 
     private static void initForEnglish() {
@@ -37,6 +39,7 @@ public class LocalStrings {
         Yes = "Yes";
         No = "No";
         Success = "Success";
+        Please_Enable_Edit_Mode = "Please enable edit mode";
     }
 
     public static String getLocalNameFromLang(Lang lang) {
