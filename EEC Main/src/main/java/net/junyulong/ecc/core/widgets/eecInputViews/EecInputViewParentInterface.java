@@ -18,4 +18,6 @@ public interface EecInputViewParentInterface extends EecInputViewBridge {
 
     EecInputViewInterface getFocusedView();
 
+    void setParentStatus(EecInputViewStatus status);
+
 }

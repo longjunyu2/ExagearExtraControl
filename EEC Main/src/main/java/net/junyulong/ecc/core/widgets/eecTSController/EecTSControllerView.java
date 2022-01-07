@@ -10,6 +10,7 @@ import net.junyulong.ecc.core.dialogs.EecButtonConfigDialog;
 import net.junyulong.ecc.core.widgets.eecInputViews.EecBaseInputViewConfig;
 import net.junyulong.ecc.core.widgets.eecInputViews.EecInputViewInterface;
 import net.junyulong.ecc.core.widgets.eecInputViews.EecInputViewParentInterface;
+import net.junyulong.ecc.core.widgets.eecInputViews.EecInputViewStatus;
 import net.junyulong.ecc.core.widgets.eecInputViews.EecInputViewType;
 import net.junyulong.ecc.core.widgets.eecInputViews.utils.EecInputViewDeployer;
 
@@ -116,6 +117,11 @@ public class EecTSControllerView extends FrameLayout implements EecInputViewInte
     }
 
     @Override
+    public void setParentStatus(EecInputViewStatus status) {
+        this.globalViewStatus = status;
+    }
+
+    @Override
     public void setFocusedView(EecInputViewInterface overlay) {
         this.focusedOverlay = overlay;
     }
@@ -132,7 +138,7 @@ public class EecTSControllerView extends FrameLayout implements EecInputViewInte
 
     @Override
     public EecInputViewStatus getParentStatus() {
-        return null;
+        return this.globalViewStatus;
     }
 
     @Override
