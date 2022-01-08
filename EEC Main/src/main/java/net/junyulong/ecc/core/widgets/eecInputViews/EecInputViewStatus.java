@@ -14,7 +14,7 @@ public enum EecInputViewStatus {
 
     public final static String ErrorName = "Error";
 
-    public EecInputViewStatus getStatus(String name) {
+    public static EecInputViewStatus getStatus(String name) {
         switch (name) {
             case AppliedName:
                 return Applied;
@@ -29,7 +29,7 @@ public enum EecInputViewStatus {
         }
     }
 
-    public String getName(EecInputViewStatus status) {
+    public static String getName(EecInputViewStatus status) {
         switch (status) {
             case Applied:
                 return AppliedName;
