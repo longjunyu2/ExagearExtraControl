@@ -35,6 +35,8 @@ public class EecUiOverlay implements XServerDisplayActivityInterfaceOverlay {
 
     protected EecTSControllerView mTSCView;
 
+    protected static View tscWidget;
+
     public EecUiOverlay(Controls controls) {
         this.mControls = controls;
     }
@@ -48,7 +50,9 @@ public class EecUiOverlay implements XServerDisplayActivityInterfaceOverlay {
         EEC.attach(EecContext.getContext((EEControls) mControls, this, xServerDisplayActivity, viewOfXServer));
         viewOfXServer.setHorizontalStretchEnabled(false);
         // Create EEC UiOverlay
-        return createUi(xServerDisplayActivity);
+        if (tscWidget == null)
+            tscWidget = createUi(xServerDisplayActivity);
+        return tscWidget;
     }
 
     @Override
