@@ -1,9 +1,7 @@
 package net.junyulong.ecc.core;
 
-import android.widget.Toast;
-
 import net.junyulong.ecc.core.configuration.ConfigWriter;
-import net.junyulong.ecc.core.local.LocalStrings;
+import net.junyulong.ecc.core.eventbus.EventBus;
 import net.junyulong.ecc.core.managers.EecInputManager;
 import net.junyulong.ecc.core.managers.EecLocalManager;
 import net.junyulong.ecc.core.managers.EecResourcesManager;
@@ -28,7 +26,8 @@ public class EEC {
     private EEC(EecContext context) {
         this.mContext = context;
         this.attachManagers();
-        Toast.makeText(mContext.getActivity(), LocalStrings.Success, Toast.LENGTH_SHORT).show();
+        // 初始化事件总线
+        EventBus.getDefaultEventBus();
     }
 
     public static EEC attach(EecContext context) {
@@ -43,8 +42,11 @@ public class EEC {
     }
 
     public static void detach() {
-        if (Eec != null)
+        if (Eec != null) {
             Eec.innerDetach();
+            Eec = null;
+        }
+
     }
 
     public EecInputManager getEecInputManager() {
@@ -69,6 +71,8 @@ public class EEC {
         localManager.detach();
         resourcesManager.detach();
         windowsManager.detach();
+        // 卸载事件总线
+        EventBus.destroy();
 
         // TODO: 保存配置文件
 
@@ -96,6 +100,10 @@ public class EEC {
         localManager.attach();
         windowsManager.attach();
         resourcesManager.attach();
+    }
+
+    public EecContext getContext() {
+        return this.mContext;
     }
 
 }

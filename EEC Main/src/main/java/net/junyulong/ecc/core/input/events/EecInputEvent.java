@@ -11,4 +11,5 @@ public abstract class EecInputEvent extends BaseEvent {
         return TAG;
     }
 
+    public abstract EventType getEventType();
 }

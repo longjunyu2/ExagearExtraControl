@@ -1,11 +1,8 @@
 package net.junyulong.ecc.uiOverlay;
 
 import android.content.Context;
-import android.support.v7.widget.AppCompatButton;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 
 import com.eltechs.axs.activities.XServerDisplayActivity;
 import com.eltechs.axs.activities.XServerDisplayActivityInterfaceOverlay;
@@ -14,14 +11,12 @@ import com.eltechs.axs.xserver.ViewFacade;
 import com.eltechs.ed.controls.Controls;
 import com.eltechs.ed.controls.EEControls;
 
-import net.junyulong.ecc.R;
 import net.junyulong.ecc.core.EEC;
 import net.junyulong.ecc.core.EecContext;
-import net.junyulong.ecc.core.resource.ResourceHelper;
-import net.junyulong.ecc.core.resource.EecImageResources;
-import net.junyulong.ecc.core.widgets.eecInputViews.button.EecButtonConfig;
-import net.junyulong.ecc.core.widgets.eecInputViews.utils.EecInputViewCreator;
+import net.junyulong.ecc.core.ExagearUtils;
 import net.junyulong.ecc.core.widgets.eecTSController.EecTSControllerView;
+
+import java.lang.ref.WeakReference;
 
 public class EecUiOverlay implements XServerDisplayActivityInterfaceOverlay {
 
@@ -35,7 +30,7 @@ public class EecUiOverlay implements XServerDisplayActivityInterfaceOverlay {
 
     protected EecTSControllerView mTSCView;
 
-    protected static View tscWidget;
+    protected static WeakReference<View> tscWidgetReference;
 
     public EecUiOverlay(Controls controls) {
         this.mControls = controls;
@@ -46,42 +41,24 @@ public class EecUiOverlay implements XServerDisplayActivityInterfaceOverlay {
         this.mHostActivity = xServerDisplayActivity;
         this.mViewOfXServer = viewOfXServer;
         this.mXServerFacade = viewOfXServer.getXServerFacade();
-        // start EEC
-        EEC.attach(EecContext.getContext((EEControls) mControls, this, xServerDisplayActivity, viewOfXServer));
-        viewOfXServer.setHorizontalStretchEnabled(false);
-        // Create EEC UiOverlay
-        if (tscWidget == null)
-            tscWidget = createUi(xServerDisplayActivity);
-        return tscWidget;
+        // 若第一次调用，则会实例化EEC，否则不会初始化
+        EEC.attach(EecContext.getContext((EEControls) mControls, this,
+                xServerDisplayActivity, viewOfXServer));
+        // 禁用XServer视图的水平拉伸
+        ExagearUtils.setHorizontalStretchEnabled(false);
+        // 创建EEC视图封装
+        if (tscWidgetReference == null || tscWidgetReference.get() == null)
+            tscWidgetReference = new WeakReference<>(createUi(xServerDisplayActivity));
+        return tscWidgetReference.get();
     }
 
     @Override
     public void detach() {
-
+        ((ViewGroup) tscWidgetReference.get().getParent()).removeView(tscWidgetReference.get());
     }
 
     private View createUi(Context context) {
         mTSCView = new EecTSControllerView(context);
-
-        mTSCView.registerEecInputView(EecInputViewCreator.createNewButtonOverlay(mHostActivity, new EecButtonConfig() {
-            @Override
-            public String getKeyName() {
-                return "Test1";
-            }
-        }, mTSCView));
-
-        //mTSCView.viewUpdate();
-        // Test
-        /*AppCompatButton button = new AppCompatButton(context);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Log.e("Hex", ResourceHelper.drawable2Hex(mHostActivity.getDrawable(R.drawable.outline_build_circle_white_24dp)));
-            }
-        });
-        button.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        button.setBackgroundDrawable(EEC.getInstance().getEecResourcesManager().getDrawable(EecImageResources.outline_build_circle_white_24dp));
-        mTSCView.addView(button);*/
         return mTSCView;
     }
 }

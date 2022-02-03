@@ -1,23 +1,48 @@
 package net.junyulong.ecc.core.widgets.eecInputViews;
 
+import android.support.annotation.NonNull;
+
+import net.junyulong.ecc.core.model.layout.EecLayoutModelWrapper;
+import net.junyulong.ecc.core.model.layout.layer.view.EecInputViewModel;
+
 import java.util.ArrayList;
 
-public interface EecInputViewParentInterface extends EecInputViewBridge {
+public interface EecInputViewParentInterface {
 
-    boolean registerEecInputView(EecInputViewInterface overlay);
+    // 注册控件
+    boolean registerInputView(@NonNull EecInputViewChildInterface overlay);
 
-    boolean unregisterEecInputView(EecInputViewInterface overlay);
+    boolean registerInputView(@NonNull EecInputViewModel model);
 
-    void clearEecInputViews();
+    // 注销控件
+    boolean unregisterInputView(@NonNull EecInputViewChildInterface overlay);
 
-    ArrayList<EecInputViewInterface> getEecInputViews();
+    boolean unregisterInputView(@NonNull String inputViewId);
 
-    EecInputViewInterface getEecInputViewById(String id);
+    // 清除全部控件
+    void removeAllInputViews();
 
+    // 获取全部控件
+    ArrayList<EecInputViewChildInterface> getEecInputViews();
+
+    // 通过Id获取一个控件
+    EecInputViewChildInterface getEecInputViewById(String id);
+
+    // 获取控件数量
     int getCounts();
 
-    EecInputViewInterface getFocusedView();
+    // 设置全局状态
+    void setGlobalStatus(EecInputViewStatus status);
 
-    void setParentStatus(EecInputViewStatus status);
+    // 获取全局状态
+    EecInputViewStatus getGlobalStatus();
 
+    // 获取控件部署器
+    EecInputViewDeployer getDeployer();
+
+    // 获取主题生成器
+    EecThemeMakerAgency getThemeMarker();
+
+    // 获取当前的Layout的Wrapper
+    EecLayoutModelWrapper getLayoutModelWrapper();
 }

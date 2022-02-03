@@ -12,25 +12,25 @@ public enum EecGestureType {
     ThreeFingers_Tap,
     FourFingers_Tap;
 
-    public static final String OneFingerShortTapName = "OneFingerShortTap";
+    public static final String OneFingerShortTapName = "OneFinger_ShortTap";
 
-    public static final String OneFingerLongTapName = "OneFingerLongTap";
+    public static final String OneFingerLongTapName = "OneFinger_LongTap";
 
-    public static final String OneFingerShortTapMoveName = "OneFingerShortTapMove";
+    public static final String OneFingerShortTapMoveName = "OneFinger_ShortTap_Move";
 
-    public static final String OneFingerLongTapMoveName = "OneFingerLongTapMove";
+    public static final String OneFingerLongTapMoveName = "OneFinger_LongTap_Move";
 
-    public static final String TwoFingersShortTapName = "TwoFingersShortTap";
+    public static final String TwoFingersShortTapName = "TwoFingers_ShortTap";
 
-    public static final String TwoFingersLongTapName = "TwoFingersLongTap";
+    public static final String TwoFingersLongTapName = "TwoFingers_LongTap";
 
-    public static final String TwoFingersShortTapMoveName = "TwoFingersShortTapMove";
+    public static final String TwoFingersShortTapMoveName = "TwoFingers_ShortTap_Move";
 
-    public static final String TwoFingersLongTapMoveName = "TwoFingersLongTapMove";
+    public static final String TwoFingersLongTapMoveName = "TwoFingers_LongTap_Move";
 
-    public static final String ThreeFingersTapName = "ThreeFingersTap";
+    public static final String ThreeFingersTapName = "ThreeFingers_Tap";
 
-    public static final String FourFingersTapName = "FourFingersTap";
+    public static final String FourFingersTapName = "FourFingers_Tap";
 
     public static String getName(EecGestureType types) {
         switch (types) {

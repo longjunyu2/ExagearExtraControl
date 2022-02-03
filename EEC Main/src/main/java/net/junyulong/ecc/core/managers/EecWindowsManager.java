@@ -6,13 +6,11 @@ public class EecWindowsManager {
 
     private DisplayMetrics displayMetrics;
 
-    public static int CellCounts = 200;
+    public static int CellCounts = 50;
 
     private int widthPx;
 
     private int heightPx;
-
-    private int cellLength;
 
     public EecWindowsManager(DisplayMetrics displayMetrics) {
         this.displayMetrics = displayMetrics;
@@ -21,7 +19,6 @@ public class EecWindowsManager {
     public void attach() {
         widthPx = displayMetrics.widthPixels;
         heightPx = displayMetrics.heightPixels;
-        cellLength = heightPx / CellCounts;
     }
 
     public void detach() {
@@ -67,6 +64,27 @@ public class EecWindowsManager {
     public int getPxFromSp(float spValue) {
         final float fontScale = displayMetrics.scaledDensity;
         return (int) (spValue * fontScale + 0.5f);
+    }
+
+    // 获取屏幕比列
+    public String getWindowRadio(int width, int height) {
+        int gcd = getGCD(width, height);
+        return width / gcd + " : " + height / gcd;
+    }
+
+    public String getWindowRadio() {
+        return getWindowRadio(widthPx, heightPx);
+    }
+
+    //最大公约数
+    private static int getGCD(int m, int n) {
+        int result;
+        while (n != 0) {
+            result = m % n;
+            m = n;
+            n = result;
+        }
+        return m;
     }
 
 }

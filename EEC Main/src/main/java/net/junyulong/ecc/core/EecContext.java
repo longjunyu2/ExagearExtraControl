@@ -16,14 +16,16 @@ public class EecContext {
 
     private final ViewOfXServer viewOfXServer;
 
-    private EecContext(EEControls eeControls, EecUiOverlay eecUiOverlay, XServerDisplayActivity hostActivity, ViewOfXServer viewOfXServer) {
+    private EecContext(EEControls eeControls, EecUiOverlay eecUiOverlay,
+                       XServerDisplayActivity hostActivity, ViewOfXServer viewOfXServer) {
         this.controls = eeControls;
         this.overlay = eecUiOverlay;
         this.hostActivity = hostActivity;
         this.viewOfXServer = viewOfXServer;
     }
 
-    public static EecContext getContext(EEControls eeControls, EecUiOverlay eecUiOverlay, XServerDisplayActivity hostActivity, ViewOfXServer viewOfXServer) {
+    public static EecContext getContext(EEControls eeControls, EecUiOverlay eecUiOverlay,
+                                        XServerDisplayActivity hostActivity, ViewOfXServer viewOfXServer) {
         return new EecContext(eeControls, eecUiOverlay, hostActivity, viewOfXServer);
     }
 

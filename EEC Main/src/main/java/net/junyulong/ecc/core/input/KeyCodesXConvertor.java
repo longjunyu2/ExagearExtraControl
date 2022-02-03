@@ -6,6 +6,8 @@ import java.util.HashMap;
 
 public class KeyCodesXConvertor {
 
+    // TODO: 使用键值对完成双向映射
+
     private static final HashMap<String, Integer> map;
 
     static {

@@ -7,7 +7,6 @@ import com.eltechs.axs.xserver.ViewFacade;
 
 public class ViewOfXServer extends GLSurfaceView {
 
-    //TODO: Full Impl Interface
     public ViewOfXServer(Context context) {
         super(context);
     }

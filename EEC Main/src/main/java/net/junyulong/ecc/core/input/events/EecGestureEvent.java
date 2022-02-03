@@ -18,6 +18,11 @@ public class EecGestureEvent extends EecInputEvent {
     }
 
     @Override
+    public EventType getEventType() {
+        return EventType.EecGestureEvent;
+    }
+
+    @Override
     public String getEventInfo() {
         return super.getEventInfo() +
                 " [Tag] " + TAG +

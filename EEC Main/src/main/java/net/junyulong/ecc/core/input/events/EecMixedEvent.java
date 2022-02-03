@@ -24,6 +24,11 @@ public class EecMixedEvent extends EecInputEvent {
     }
 
     @Override
+    public EventType getEventType() {
+        return EventType.EecMixedEvent;
+    }
+
+    @Override
     public String getEventInfo() {
         StringBuilder stb = new StringBuilder();
         for (Event event : list)

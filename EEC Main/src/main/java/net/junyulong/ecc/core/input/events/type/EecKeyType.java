@@ -5,11 +5,11 @@ public enum EecKeyType {
     Release,
     Press_Release;
 
-    public static final String PressName = "press";
+    public static final String PressName = "Press";
 
-    public static final String ReleaseName = "release";
+    public static final String ReleaseName = "Release";
 
-    public static final String PressReleaseName = "press_release";
+    public static final String PressReleaseName = "Press_Release";
 
     public static String getName(EecKeyType types) {
         switch (types) {

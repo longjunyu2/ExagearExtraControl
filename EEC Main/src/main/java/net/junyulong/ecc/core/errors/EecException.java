@@ -1,5 +1,6 @@
 package net.junyulong.ecc.core.errors;
 
+// 基本错误
 public class EecException extends RuntimeException {
 
     public EecException() {

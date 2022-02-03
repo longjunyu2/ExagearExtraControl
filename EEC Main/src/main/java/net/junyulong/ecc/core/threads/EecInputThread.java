@@ -4,7 +4,7 @@ import net.junyulong.ecc.core.input.events.EecInputEvent;
 import net.junyulong.ecc.core.input.factorys.EecInputFactory;
 import net.junyulong.ecc.core.universal.ElementQueue;
 
-public class EecInputThread extends EecBaseThread {
+public class EecInputThread extends EecBaseLoopThread {
 
     private static final int DEFAULT_SLEEP_TIME = 1; // ms
 
@@ -47,6 +47,7 @@ public class EecInputThread extends EecBaseThread {
 
     @Override
     public void destroyThread() {
+        pauseThread();
         super.destroyThread();
         this.mInputFactory = null;
         this.mQueue.clear();

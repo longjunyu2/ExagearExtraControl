@@ -21,6 +21,11 @@ public class EecWheelEvent extends EecInputEvent {
     }
 
     @Override
+    public EventType getEventType() {
+        return EventType.EecWheelEvent;
+    }
+
+    @Override
     public String getEventInfo() {
         return super.getEventInfo() +
                 " [Tag] " + TAG +

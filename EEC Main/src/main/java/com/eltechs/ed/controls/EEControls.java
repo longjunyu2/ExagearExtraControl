@@ -4,7 +4,7 @@ import com.eltechs.axs.activities.XServerDisplayActivityInterfaceOverlay;
 
 import net.junyulong.ecc.uiOverlay.EecUiOverlay;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class EEControls extends Controls {
@@ -21,10 +21,9 @@ public class EEControls extends Controls {
 
     @Override
     public List<ControlsInfoElem> getInfoElems() {
-        return Arrays.asList(
-                new ControlsInfoElem(0, "Exagear Extra Controls", "This controls mode is used to customize the operation layout."),
-                new ControlsInfoElem(0, "Float Button", "Click this button to configure customize controls."
-                ));
+        return Collections.singletonList(
+                new ControlsInfoElem(0, "Exagear Extra Controls", "This controls mode is used to customize the operation layout.")
+        );
     }
 
     @Override

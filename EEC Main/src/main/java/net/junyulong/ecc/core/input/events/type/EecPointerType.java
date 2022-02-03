@@ -4,9 +4,9 @@ public enum EecPointerType {
     Absolute,
     Relative;
 
-    public static final String AbsoluteName = "absolute";
+    public static final String AbsoluteName = "Absolute";
 
-    public static final String RelativeName = "relative";
+    public static final String RelativeName = "Relative";
 
     public static String getName(EecPointerType types) {
         switch (types) {

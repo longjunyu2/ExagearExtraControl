@@ -8,7 +8,6 @@ import net.junyulong.ecc.core.local.LocalStrings;
 public class EecLocalManager {
 
     private Lang mLang;
-    private static final Lang DEFAULT_LANG = Lang.Chinese;
     private final ConfigReader config;
 
     public EecLocalManager(ConfigReader configuration) {

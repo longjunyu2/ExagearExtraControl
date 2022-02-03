@@ -3,7 +3,7 @@
     package="net.junyulong.ecc">
 
     <application
-        android:allowBackup="true"
+        android:name=".application.EecApplication"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
@@ -11,7 +11,8 @@
         android:theme="@style/Theme.ExagearExtraControl">
         <activity
             android:name=".MainActivity"
-            android:screenOrientation="landscape">
+            android:screenOrientation="landscape"
+            android:configChanges="orientation|screenSize|smallestScreenSize|keyboard|keyboardHidden|navigation">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

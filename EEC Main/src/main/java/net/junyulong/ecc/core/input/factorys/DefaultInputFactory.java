@@ -2,6 +2,7 @@ package net.junyulong.ecc.core.input.factorys;
 
 import com.eltechs.axs.xserver.ViewFacade;
 
+import net.junyulong.ecc.core.errors.EecException;
 import net.junyulong.ecc.core.input.events.EecGestureEvent;
 import net.junyulong.ecc.core.input.events.EecInputEvent;
 import net.junyulong.ecc.core.input.events.EecKeyEvent;
@@ -28,23 +29,28 @@ public class DefaultInputFactory implements EecInputFactory {
     }
 
     private void dispatchEvent(EecInputEvent event) {
-        if (event instanceof EecKeyEvent)
-            doKeyEvent((EecKeyEvent) event);
-        else if (event instanceof EecPointerEvent)
-            doPointerEvent((EecPointerEvent) event);
-        else if (event instanceof EecWheelEvent)
-            doWheelEvent((EecWheelEvent) event);
-        else if (event instanceof EecGestureEvent)
-            doGestureEvent((EecGestureEvent) event);
-        else if (event instanceof EecMixedEvent) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
+        switch (event.getEventType()) {
+            case EecKeyEvent:
+                doKeyEvent((EecKeyEvent) event);
+                break;
+            case EecPointerEvent:
+                doPointerEvent((EecPointerEvent) event);
+                break;
+            case EecWheelEvent:
+                doWheelEvent((EecWheelEvent) event);
+                break;
+            case EecGestureEvent:
+                doGestureEvent((EecGestureEvent) event);
+                break;
+            case EecMixedEvent:
+                new Thread(() -> {
                     ArrayList<EecInputEvent> events = new ArrayList<>(((EecMixedEvent) event).getEvents());
                     for (EecInputEvent ev : events)
                         dispatchEvent(ev);
-                }
-            }).start();
+                }).start();
+                break;
+            default:
+                throw new EecException("Unknown input event type: " + event.getEventType().name());
         }
     }
 

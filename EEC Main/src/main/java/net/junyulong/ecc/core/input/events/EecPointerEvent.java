@@ -24,6 +24,11 @@ public class EecPointerEvent extends EecInputEvent {
     }
 
     @Override
+    public EventType getEventType() {
+        return EventType.EecPointerEvent;
+    }
+
+    @Override
     public String getEventInfo() {
         return super.getEventInfo() +
                 " [Tag] " + TAG +

@@ -36,12 +36,12 @@ public class ElementQueue<T> {
     }
 
     // 向队列添加元素
-    public boolean put(T element) {
-        return (!isQueueFull() & mQueue.offer(element));
+    public synchronized boolean put(T element) {
+        return (!isQueueFull() && mQueue.offer(element));
     }
 
     // 从队列取出元素
-    public T get() {
+    public synchronized T get() {
         return mQueue.poll();
     }
 
