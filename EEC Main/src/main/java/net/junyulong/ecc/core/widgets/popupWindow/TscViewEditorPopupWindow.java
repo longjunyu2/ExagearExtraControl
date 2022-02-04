@@ -695,8 +695,10 @@ public class TscViewEditorPopupWindow extends TscPopupWindow implements IEventSu
         private EditText createEditText(View.OnClickListener clickListener) {
             EditText editView = new EditText(context);
             editView.setTextSize(TextSizeSp);
-            editView.setLayoutParams(viewHelper.createParamsWithMargin(ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT));
+            LinearLayout.LayoutParams editParams = viewHelper.createParamsWithMargin(ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT);
+            editParams.gravity = Gravity.CENTER;
+            editView.setLayoutParams(editParams);
             editView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
             editView.setTextColor(Color.parseColor(EecColorResources.ColorHintText));
             editView.setFocusableInTouchMode(false);
@@ -709,7 +711,9 @@ public class TscViewEditorPopupWindow extends TscPopupWindow implements IEventSu
             UnityThemeButton button = new UnityThemeButton(context);
             button.setTextSize(TextSizeSp);
             button.setText(text);
-            button.setLayoutParams(viewHelper.createParamsWithMargin(width, height));
+            LinearLayout.LayoutParams buttonParams = viewHelper.createParamsWithMargin(width, height);
+            buttonParams.gravity = Gravity.CENTER;
+            button.setLayoutParams(buttonParams);
             button.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
             button.setTextColor(Color.parseColor(EecColorResources.ColorMainText));
             button.setOnClickListener(clickListener);
