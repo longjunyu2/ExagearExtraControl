@@ -480,7 +480,6 @@ public class TscViewEditorPopupWindow extends TscPopupWindow implements IEventSu
 
             // 对象容器
             LinearLayout refContainer = localViewHelper.createItemContainer(LocalStrings.Object);
-            layoutItem.addView(refContainer);
             // 文本: 约束对象Id
             TextView textObjectId = new TextView(context);
             textObjectId.setText(ParentId);
@@ -494,6 +493,7 @@ public class TscViewEditorPopupWindow extends TscPopupWindow implements IEventSu
             // 约束类型容器
             LinearLayout bindContainer = localViewHelper.createItemContainer(LocalStrings.Bind_Type);
             layoutItem.addView(bindContainer);
+            layoutItem.addView(refContainer);
             // 列表: 约束类型
             Spinner spinnerBind = new Spinner(context);
             spinnerBind.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
