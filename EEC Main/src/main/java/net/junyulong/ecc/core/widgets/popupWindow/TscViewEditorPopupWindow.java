@@ -202,7 +202,7 @@ public class TscViewEditorPopupWindow extends TscPopupWindow implements IEventSu
             innerLayout.addView(viewCreator.createAppearanceEditView());
 
             // 视图更新
-            innerWindowUpdate();
+            innerContainerUpdate();
 
             uiCreated = true;
 
