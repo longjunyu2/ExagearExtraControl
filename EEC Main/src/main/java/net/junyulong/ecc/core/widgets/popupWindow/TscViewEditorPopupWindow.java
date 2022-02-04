@@ -695,9 +695,10 @@ public class TscViewEditorPopupWindow extends TscPopupWindow implements IEventSu
         private EditText createEditText(View.OnClickListener clickListener) {
             EditText editView = new EditText(context);
             editView.setTextSize(TextSizeSp);
-            LinearLayout.LayoutParams editParams = viewHelper.createParamsWithMargin(ViewGroup.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams editParams = viewHelper.createParamsWithMargin(ViewGroup.LayoutParams.WRAP_CONTENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT);
             editParams.gravity = Gravity.CENTER;
+            editParams.weight = 1;
             editView.setLayoutParams(editParams);
             editView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
             editView.setTextColor(Color.parseColor(EecColorResources.ColorHintText));
