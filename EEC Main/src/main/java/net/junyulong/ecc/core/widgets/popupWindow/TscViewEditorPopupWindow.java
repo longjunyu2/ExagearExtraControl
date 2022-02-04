@@ -202,8 +202,7 @@ public class TscViewEditorPopupWindow extends TscPopupWindow implements IEventSu
             innerLayout.addView(viewCreator.createAppearanceEditView());
 
             // 视图更新
-            for (ViewUpdaterAndEventConsumer updater : updaterList)
-                updater.update();
+            innerWindowUpdate();
 
             uiCreated = true;
 
@@ -220,6 +219,12 @@ public class TscViewEditorPopupWindow extends TscPopupWindow implements IEventSu
     private void innerWindowUpdate() {
         // 仅更新位置而不改变窗口大小
         update((int) xPos, (int) yPos, getWidth(), getHeight());
+    }
+
+    // 编辑窗口内容更新
+    private void innerContainerUpdate() {
+        for (ViewUpdaterAndEventConsumer updater : updaterList)
+            updater.update();
     }
 
     @Override
