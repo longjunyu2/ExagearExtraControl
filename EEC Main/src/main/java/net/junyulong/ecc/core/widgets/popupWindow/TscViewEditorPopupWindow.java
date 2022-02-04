@@ -128,6 +128,9 @@ public class TscViewEditorPopupWindow extends TscPopupWindow implements IEventSu
             /* 控件拖拽完成 */ ViewModelDraggedFinished
     };
 
+    // 单位步长
+    private final static int CellStep = 2;
+
     public TscViewEditorPopupWindow(Context context, EecInputViewParentInterface parentInterface) {
         super(context);
         this.context = context;
@@ -459,6 +462,8 @@ public class TscViewEditorPopupWindow extends TscPopupWindow implements IEventSu
             }
             LocalViewHelper localViewHelper = new LocalViewHelper();
 
+            int offsetButtonSizePx = EEC.getInstance().getEecWindowManager().getPxFromDp(40);
+
             // 外容器
             LinearLayout layout = new LinearLayout(context);
             layout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
@@ -527,6 +532,7 @@ public class TscViewEditorPopupWindow extends TscPopupWindow implements IEventSu
                         childInterface.getModel().getBind().horizontal.referenceMode = (String) parent.getItemAtPosition(position);
                     else
                         childInterface.getModel().getBind().vertical.referenceMode = (String) parent.getItemAtPosition(position);
+                    // 更新控件
                     parentInterface.getDeployer().updateView(childInterface);
                     childInterface.viewUpdate(EecInputViewUpdateType.WithChildren);
                 }
@@ -543,12 +549,35 @@ public class TscViewEditorPopupWindow extends TscPopupWindow implements IEventSu
             // 偏移量容器
             LinearLayout offsetContainer = localViewHelper.createItemContainer(LocalStrings.Offset);
             layoutItem.addView(offsetContainer);
+            // 按钮: 减小偏移量
+            offsetContainer.addView(viewHelper.createButton(v -> {
+                if (refType == RefType.Horizontal)
+                    childInterface.getModel().getBind().horizontal.offset -= CellStep;
+                else
+                    childInterface.getModel().getBind().vertical.offset -= CellStep;
+                // 更新控件
+                parentInterface.getDeployer().updateView(childInterface);
+                childInterface.viewUpdate(EecInputViewUpdateType.WithChildren);
+                // 更新编辑框
+                innerContainerUpdate();
+            }, offsetButtonSizePx, offsetButtonSizePx, LocalStrings.Symbol_Left));
             // 编辑框: 偏移量
             EditText editOffset = viewHelper.createEditText(v -> {
                 // TODO: 添加偏移量编辑功能
             });
             offsetContainer.addView(editOffset);
-
+            // 按钮: 增加偏移量
+            offsetContainer.addView(viewHelper.createButton(v -> {
+                if (refType == RefType.Horizontal)
+                    childInterface.getModel().getBind().horizontal.offset += CellStep;
+                else
+                    childInterface.getModel().getBind().vertical.offset += CellStep;
+                // 更新控件
+                parentInterface.getDeployer().updateView(childInterface);
+                childInterface.viewUpdate(EecInputViewUpdateType.WithChildren);
+                // 更新编辑框
+                innerContainerUpdate();
+            }, offsetButtonSizePx, offsetButtonSizePx, LocalStrings.Symbol_Right));
             // 添加更新器
             updaterList.add(new ViewUpdaterAndEventConsumer() {
                 @Override

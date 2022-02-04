@@ -82,6 +82,8 @@ public class LocalStrings {
     public static String One_or_more_strongly_bound_children;
     public static String Layer_Empty;
     public static String Bind_Type;
+    public static String Symbol_Left;
+    public static String Symbol_Right;
 
     public static void initialize(Lang lang) {
         switch (lang) {
@@ -155,6 +157,8 @@ public class LocalStrings {
         One_or_more_strongly_bound_children = "该控件存在一个或多个强绑定子项，删除该控件前请清空该控件的强绑定引用。";
         Layer_Empty = "图层不存在";
         Bind_Type = "约束类型";
+        Symbol_Left = "<-";
+        Symbol_Right = "->";
     }
 
     private static void initForEnglish() {
@@ -218,6 +222,8 @@ public class LocalStrings {
         One_or_more_strongly_bound_children = "There are one or more strongly bound subitems in the control. Clear the strongly bound reference of the control before deleting it.";
         Layer_Empty = "Layer is empty";
         Bind_Type = "Bind Type";
+        Symbol_Left = "<-";
+        Symbol_Right = "->";
     }
 
     public static Lang getLangFormLocalName(String str) {
