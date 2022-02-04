@@ -558,7 +558,7 @@ public class TscViewEditorPopupWindow extends TscPopupWindow implements IEventSu
                 // 更新控件
                 parentInterface.getDeployer().updateView(childInterface);
                 childInterface.viewUpdate(EecInputViewUpdateType.WithChildren);
-                // 更新编辑框
+                // 更新编辑视图
                 innerContainerUpdate();
             }, offsetButtonSizePx, offsetButtonSizePx, LocalStrings.Symbol_Left));
             // 编辑框: 偏移量
@@ -575,7 +575,7 @@ public class TscViewEditorPopupWindow extends TscPopupWindow implements IEventSu
                 // 更新控件
                 parentInterface.getDeployer().updateView(childInterface);
                 childInterface.viewUpdate(EecInputViewUpdateType.WithChildren);
-                // 更新编辑框
+                // 更新编辑视图
                 innerContainerUpdate();
             }, offsetButtonSizePx, offsetButtonSizePx, LocalStrings.Symbol_Right));
             // 添加更新器
@@ -608,6 +608,65 @@ public class TscViewEditorPopupWindow extends TscPopupWindow implements IEventSu
 
         // 创建外观编辑视图
         private View createAppearanceEditView() {
+            class LocalViewHelper {
+                public final int Width = 0;
+                public final int Height = 1;
+                private final int offsetButtonSizePx = EEC.getInstance().getEecWindowManager().getPxFromDp(40);
+                public EditText editWidth;
+                public EditText editHeight;
+
+                public LinearLayout createParamEditItemContainer(int paramType) {
+                    // 容器
+                    LinearLayout container = viewHelper.createItemContainerView(
+                            paramType == Width ? LocalStrings.Width : LocalStrings.Height
+                    );
+                    // 按钮: 减小
+                    container.addView(viewHelper.createButton(v -> {
+                        int paramSize = paramType == Width
+                                ? childInterface.getModel().getParam().width
+                                : childInterface.getModel().getParam().height;
+                        if (paramSize >= CellStep) {
+                            if (paramType == Width)
+                                childInterface.getModel().getParam().width -= CellStep;
+                            else
+                                childInterface.getModel().getParam().height -= CellStep;
+                        } else {
+                            if (paramType == Width)
+                                childInterface.getModel().getParam().width = 0;
+                            else
+                                childInterface.getModel().getParam().height = 0;
+                        }
+                        // 更新控件
+                        parentInterface.getDeployer().updateView(childInterface);
+                        childInterface.viewUpdate(EecInputViewUpdateType.WithChildren);
+                        // 更新编辑视图
+                        innerContainerUpdate();
+                    }, offsetButtonSizePx, offsetButtonSizePx, LocalStrings.Symbol_Left));
+                    // 编辑框: 控件宽
+                    EditText editView = viewHelper.createEditText(v -> {
+                        // TODO: 添加编辑功能
+                    });
+                    container.addView(editView);
+                    if (paramType == Width)
+                        editWidth = editView;
+                    else editHeight = editView;
+                    // 按钮: 增加
+                    container.addView(viewHelper.createButton(v -> {
+                        if (paramType == Width)
+                            childInterface.getModel().getParam().width += CellStep;
+                        else
+                            childInterface.getModel().getParam().height += CellStep;
+                        // 更新控件
+                        parentInterface.getDeployer().updateView(childInterface);
+                        childInterface.viewUpdate(EecInputViewUpdateType.WithChildren);
+                        // 更新编辑视图
+                        innerContainerUpdate();
+                    }, offsetButtonSizePx, offsetButtonSizePx, LocalStrings.Symbol_Right));
+                    return container;
+                }
+            }
+            LocalViewHelper localViewHelper = new LocalViewHelper();
+
             // 外容器
             LinearLayout layout = new LinearLayout(context);
             layout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
@@ -618,35 +677,22 @@ public class TscViewEditorPopupWindow extends TscPopupWindow implements IEventSu
             layout.addView(viewHelper.createTinyHeader(LocalStrings.View_Appearance));
 
             // 项: 控件宽
-            LinearLayout layoutWidth = viewHelper.createItemContainerView(LocalStrings.Width);
-            layout.addView(layoutWidth);
-            // 编辑框: 控件宽
-            EditText editWidth = viewHelper.createEditText(v -> {
-                // TODO: 添加宽度编辑功能
-            });
-            layoutWidth.addView(editWidth);
+            layout.addView(localViewHelper.createParamEditItemContainer(localViewHelper.Width));
 
             // 项: 控件高
-            LinearLayout layoutHeight = viewHelper.createItemContainerView(LocalStrings.Width);
-            layout.addView(layoutHeight);
-            // 编辑框: 控件高
-            EditText editHeight = viewHelper.createEditText(v -> {
-                // TODO: 添加高度编辑功能
-            });
-            layoutHeight.addView(editHeight);
+            layout.addView(localViewHelper.createParamEditItemContainer(localViewHelper.Height));
 
             // 添加更新器
             updaterList.add(new ViewUpdaterAndEventConsumer() {
                 @Override
                 public void update() {
                     // 更新控件宽度
-                    editWidth.post(() -> editWidth.setText(String.valueOf(
+                    localViewHelper.editWidth.post(() -> localViewHelper.editWidth.setText(String.valueOf(
                             childInterface.getModel().getParam().width)));
                     // 更新控件高度
-                    editHeight.post(() -> editHeight.setText(String.valueOf(
+                    localViewHelper.editHeight.post(() -> localViewHelper.editHeight.setText(String.valueOf(
                             childInterface.getModel().getParam().height)));
                 }
-
                 @Override
                 public boolean onReceiveEvent(BaseEvent event) {
                     return false;
