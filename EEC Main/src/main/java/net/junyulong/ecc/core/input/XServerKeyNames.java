@@ -42,6 +42,12 @@ package net.junyulong.ecc.core.input;
 @SuppressWarnings("unused")
 public enum XServerKeyNames {
 
+  /*
+  * EEC WARNING:
+  * PLEASE DO NOT MODIFY THE VARIABLE NAMES OF THE FOLLOWING ENUMERATIONS,
+  * WHICH ARE DIRECTLY RELATED TO ADDITIONAL RESOURCES.
+  */
+
 // #ifndef _WINKEYNAMES_H
 // #define _WINKEYNAMES_H
 
