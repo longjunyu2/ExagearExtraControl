@@ -84,14 +84,14 @@ public enum XServerKeyNames {
   */
 
          KEY_Escape       /* Escape                0x01  */    (9),
-         KEY_1            /* 1           !         0x02  */    (10),
-         KEY_2            /* 2           @         0x03  */    (11),
-         KEY_3            /* 3           #         0x04  */    (12),
-         KEY_4            /* 4           $         0x05  */    (13),
-         KEY_5            /* 5           %         0x06  */    (14),
-         KEY_6            /* 6           ^         0x07  */    (15),
-         KEY_7            /* 7           &         0x08  */    (16),
-         KEY_8            /* 8           *         0x09  */    (17),
+         KEY_1            /* 1           !         0x02  */   (10),
+         KEY_2            /* 2           @         0x03  */   (11),
+         KEY_3            /* 3           #         0x04  */   (12),
+         KEY_4            /* 4           $         0x05  */   (13),
+         KEY_5            /* 5           %         0x06  */   (14),
+         KEY_6            /* 6           ^         0x07  */   (15),
+         KEY_7            /* 7           &         0x08  */   (16),
+         KEY_8            /* 8           *         0x09  */   (17),
          KEY_9            /* 9           (         0x0a  */   (18),
          KEY_0            /* 0           )         0x0b  */   (19),
          KEY_Minus        /* - (Minus)   _ (Under) 0x0c  */   (20),
@@ -137,7 +137,7 @@ public enum XServerKeyNames {
          KEY_Period       /* . (Period)  >(Greater)0x34  */   (60),
          KEY_Slash        /* / (Slash)   ?         0x35  */   (61),
          KEY_ShiftR       /* Shift(right)          0x36  */   (62),
-         KEY_KP_Multiply  /* *                     0x37  */   (63),
+         KEY_KP_Multiply  /* *                     0x37  */   (63, false),
          KEY_Alt          /* Alt(left)             0x38  */   (64),
          KEY_Space        /*   (SpaceBar)          0x39  */   (65),
          KEY_CapsLock     /* CapsLock              0x3a  */   (66),
@@ -151,77 +151,77 @@ public enum XServerKeyNames {
          KEY_F8           /* F8                    0x42  */   (74),
          KEY_F9           /* F9                    0x43  */   (75),
          KEY_F10          /* F10                   0x44  */   (76),
-         KEY_NumLock      /* NumLock               0x45  */   (77),
-         KEY_ScrollLock   /* ScrollLock            0x46  */   (78),
-         KEY_KP_7         /* 7           Home      0x47  */   (79),
-         KEY_KP_8         /* 8           Up        0x48  */   (80),
-         KEY_KP_9         /* 9           PgUp      0x49  */   (81),
-         KEY_KP_Minus     /* - (Minus)             0x4a  */   (82),
-         KEY_KP_4         /* 4           Left      0x4b  */   (83),
-         KEY_KP_5         /* 5                     0x4c  */   (84),
-         KEY_KP_6         /* 6           Right     0x4d  */   (85),
-         KEY_KP_Plus      /* + (Plus)              0x4e  */   (86),
-         KEY_KP_1         /* 1           End       0x4f  */   (87),
-         KEY_KP_2         /* 2           Down      0x50  */   (88),
-         KEY_KP_3         /* 3           PgDown    0x51  */   (89),
-         KEY_KP_0         /* 0           Insert    0x52  */   (90),
+         KEY_NumLock      /* NumLock               0x45  */   (77, false),
+         KEY_ScrollLock   /* ScrollLock            0x46  */   (78, false),
+         KEY_KP_7         /* 7           Home      0x47  */   (79, false),
+         KEY_KP_8         /* 8           Up        0x48  */   (80, false),
+         KEY_KP_9         /* 9           PgUp      0x49  */   (81, false),
+         KEY_KP_Minus     /* - (Minus)             0x4a  */   (82, false),
+         KEY_KP_4         /* 4           Left      0x4b  */   (83, false),
+         KEY_KP_5         /* 5                     0x4c  */   (84, false),
+         KEY_KP_6         /* 6           Right     0x4d  */   (85, false),
+         KEY_KP_Plus      /* + (Plus)              0x4e  */   (86, false),
+         KEY_KP_1         /* 1           End       0x4f  */   (87, false),
+         KEY_KP_2         /* 2           Down      0x50  */   (88, false),
+         KEY_KP_3         /* 3           PgDown    0x51  */   (89, false),
+         KEY_KP_0         /* 0           Insert    0x52  */   (90, false),
          KEY_KP_Decimal   /* . (Decimal) Delete    0x53  */   (91),
-         KEY_SysReqest    /* SysReqest             0x54  */   (92),
-         KEY_Fn           /* Fn                    0x55  */   (93),
-         KEY_Less         /* < (Less)   >(Greater) 0x56  */   (94),
+         KEY_SysReqest    /* SysReqest             0x54  */   (92, false),
+         KEY_Fn           /* Fn                    0x55  */   (93, false),
+         KEY_Less         /* < (Less)   >(Greater) 0x56  */   (94, false),
          KEY_F11          /* F11                   0x57  */   (95),
          KEY_F12          /* F12                   0x58  */   (96),
 
-         KEY_Prefix0      /* special               0x60  */   (96),
-         KEY_Prefix1      /* specail               0x61  */   (97),
+         KEY_Prefix0      /* special               0x60  */   (97, false),
+         KEY_Prefix1      /* specail               0x61  */   (98, false),
 
   /*
   * The 'scancodes' below are generated by the server, because the MF101/102
   * keyboard sends them as sequence of other scancodes
   */
-    // TODO: 从Exagear中推定下列键值
-         KEY_Home         /* Home                  0x59  */   (89),
-         KEY_Up           /* Up                    0x5a  */   (90),
-         KEY_PgUp         /* PgUp                  0x5b  */   (91),
-         KEY_Left         /* Left                  0x5c  */   (92),
-         KEY_Begin        /* Begin                 0x5d  */   (93),
-         KEY_Right        /* Right                 0x5e  */   (94),
-         KEY_End          /* End                   0x5f  */   (95),
-         KEY_Down         /* Down                  0x60  */   (96),
-         KEY_PgDown       /* PgDown                0x61  */   (97),
-         KEY_Insert       /* Insert                0x62  */   (98),
-         KEY_Delete       /* Delete                0x63  */   (99),
-         KEY_KP_Enter     /* Enter                 0x64  */  (100),
-         KEY_RCtrl        /* Ctrl(right)           0x65  */  (101),
-         KEY_Pause        /* Pause                 0x66  */  (102),
-         KEY_Print        /* Print                 0x67  */  (103),
-         KEY_KP_Divide    /* Divide                0x68  */  (104),
-         KEY_AltLang      /* AtlLang(right)        0x69  */  (105),
-         KEY_Break        /* Break                 0x6a  */  (106),
-         KEY_LMeta        /* Left Meta             0x6b  */  (107),
-         KEY_RMeta        /* Right Meta            0x6c  */  (108),
-         KEY_Menu         /* Menu                  0x6d  */  (109),
-         KEY_F13          /* F13                   0x6e  */  (110),
-         KEY_F14          /* F14                   0x6f  */  (111),
-         KEY_F15          /* F15                   0x70  */  (112),
-         KEY_F16          /* F16                   0x71  */  (113),
-         KEY_F17          /* F17                   0x72  */  (114),
-         KEY_KP_DEC       /* KP_DEC                0x73  */  (115),
-         KEY_KP_Equal	  /* Equal (Keypad)        0x76  */  (118),
-         KEY_XFER         /* Kanji Transfer        0x79  */  (121),
-         KEY_NFER         /* No Kanji Transfer     0x7b  */  (123),
-         KEY_Yen          /* Yen                   0x7d  */  (125),
-         KEY_HKTG         /* Hirugana/Katakana tog 0xc8  */  (200),
-         KEY_BSlash2      /* \           _         0xcb  */  (203),
 
-         KEY_Mute         /* Audio Mute                  */  (152),
-         KEY_AudioLower   /* Audio Lower                 */  (168),
-         KEY_AudioRaise   /* Audio Raise                 */  (166),
+         KEY_Home         /* Home                  0x59  */  (110),
+         KEY_Up           /* Up                    0x5a  */  (111),
+         KEY_PgUp         /* PgUp                  0x5b  */  (112),
+         KEY_Left         /* Left                  0x5c  */  (113),
+         KEY_Begin        /* Begin                 0x5d  */   (93, false),
+         KEY_Right        /* Right                 0x5e  */  (114),
+         KEY_End          /* End                   0x5f  */  (115),
+         KEY_Down         /* Down                  0x60  */  (116),
+         KEY_PgDown       /* PgDown                0x61  */  (117),
+         KEY_Insert       /* Insert                0x62  */  (118),
+         KEY_Delete       /* Delete                0x63  */  (119),
+         KEY_KP_Enter     /* Enter                 0x64  */  (100, false),
+         KEY_RCtrl        /* Ctrl(right)           0x65  */  (105),
+         KEY_Pause        /* Pause                 0x66  */  (102, false),
+         KEY_Print        /* Print                 0x67  */  (103, false),
+         KEY_KP_Divide    /* Divide                0x68  */  (104, false),
+         KEY_AltLang      /* AtlLang(right)        0x69  */  (108),
+         KEY_Break        /* Break                 0x6a  */  (106, false),
+         KEY_LMeta        /* Left Meta             0x6b  */  (107, false),
+         KEY_RMeta        /* Right Meta            0x6c  */  (108, false),
+         KEY_Menu         /* Menu                  0x6d  */  (109, false),
+         KEY_F13          /* F13                   0x6e  */  (110, false),
+         KEY_F14          /* F14                   0x6f  */  (111, false),
+         KEY_F15          /* F15                   0x70  */  (112, false),
+         KEY_F16          /* F16                   0x71  */  (113, false),
+         KEY_F17          /* F17                   0x72  */  (114, false),
+         KEY_KP_DEC       /* KP_DEC                0x73  */  (115, false),
+         KEY_KP_Equal	  /* Equal (Keypad)        0x76  */  (118, false),
+         KEY_XFER         /* Kanji Transfer        0x79  */  (121, false),
+         KEY_NFER         /* No Kanji Transfer     0x7b  */  (123, false),
+         KEY_Yen          /* Yen                   0x7d  */  (125, false),
+         KEY_HKTG         /* Hirugana/Katakana tog 0xc8  */  (200, false),
+         KEY_BSlash2      /* \           _         0xcb  */  (203, false),
 
-         KEY_NEXTSONG     /* Media next                  */  (145),
-         KEY_PLAYPAUSE    /* Media play/pause toggle     */  (154),
-         KEY_PREVIOUSSONG /* Media previous              */  (136),
-         KEY_STOPCD       /* Media stop                  */  (156),
+         KEY_Mute         /* Audio Mute                  */  (152, false),
+         KEY_AudioLower   /* Audio Lower                 */  (168, false),
+         KEY_AudioRaise   /* Audio Raise                 */  (166, false),
+
+         KEY_NEXTSONG     /* Media next                  */  (145, false),
+         KEY_PLAYPAUSE    /* Media play/pause toggle     */  (154, false),
+         KEY_PREVIOUSSONG /* Media previous              */  (136, false),
+         KEY_STOPCD       /* Media stop                  */  (156, false),
 
   /* These are for "notused" and "unknown" entries in translation maps. */
          KEY_NOTUSED	  (0),
@@ -235,12 +235,22 @@ public enum XServerKeyNames {
     public final static int MAX_KEYCODE     = (NUM_KEYCODES + MIN_KEYCODE - 1);
 
     private final int value;
+    private final boolean enable;
+
+    XServerKeyNames(int value, boolean enable) {
+        this.value = value;
+        this.enable = enable;
+    }
 
     XServerKeyNames(int value) {
-        this.value = value;
+        this(value, true);
     }
 
     public int value() {
         return this.value;
+    }
+
+    public boolean enabled() {
+        return this.enable;
     }
 }
