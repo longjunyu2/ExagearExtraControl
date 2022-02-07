@@ -84,6 +84,9 @@ public class LocalStrings {
     public static String Bind_Type;
     public static String Symbol_Left;
     public static String Symbol_Right;
+    public static String Scan_Code_Test;
+    public static String Post;
+    public static String Next;
 
     public static void initialize(Lang lang) {
         switch (lang) {
@@ -159,6 +162,9 @@ public class LocalStrings {
         Bind_Type = "约束类型";
         Symbol_Left = "<-";
         Symbol_Right = "->";
+        Scan_Code_Test = "扫描码测试";
+        Post = "发送";
+        Next = "下一个";
     }
 
     private static void initForEnglish() {
@@ -224,6 +230,9 @@ public class LocalStrings {
         Bind_Type = "Bind Type";
         Symbol_Left = "<-";
         Symbol_Right = "->";
+        Scan_Code_Test = "ScanCodeTest";
+        Post = "Post";
+        Next = "Next";
     }
 
     public static Lang getLangFormLocalName(String str) {
