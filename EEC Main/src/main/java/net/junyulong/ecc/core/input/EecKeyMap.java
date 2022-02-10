@@ -25,6 +25,15 @@ public class EecKeyMap {
 
     private HashMap<XServerKeyNames, KeyItem> keyboardMap;
 
+    public EecKeyMap() {
+        super();
+    }
+
+    public EecKeyMap(Lang lang) {
+        this();
+        init(lang);
+    }
+
     public void init(Lang lang) {
         switch (lang) {
             case zh_cn:
@@ -295,12 +304,12 @@ public class EecKeyMap {
         return keyboardMap;
     }
 
-    private static class KeyItem {
+    public static class KeyItem {
         private final XServerKeyNames key;
         private final String[] symbols;
 
         // 符号的顺序: 上、下、左、右 最多支持四个
-        public KeyItem(XServerKeyNames key, String... symbols) {
+        private KeyItem(XServerKeyNames key, String... symbols) {
             this.key = key;
             this.symbols = symbols;
         }

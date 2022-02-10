@@ -18,6 +18,7 @@ package net.junyulong.ecc.core.managers;
 
 import net.junyulong.ecc.core.configuration.ConfigReader;
 import net.junyulong.ecc.core.errors.EecException;
+import net.junyulong.ecc.core.input.EecKeyMap;
 import net.junyulong.ecc.core.local.Lang;
 import net.junyulong.ecc.core.local.LocalStrings;
 
@@ -25,17 +26,21 @@ public class EecLocalManager {
 
     private Lang mLang;
     private final ConfigReader config;
+    private EecKeyMap keyMap;
 
     public EecLocalManager(ConfigReader configuration) {
         this.config = configuration;
     }
 
     public void attach() {
+        // 从配置文件读取语言
         mLang = LocalStrings.getLangFormLocalName(config.getLocal());
         if (mLang == null)
             throw new EecException("Lang is null.");
         else
             LocalStrings.initialize(mLang);
+        // 初始化本地化键盘符号表
+        keyMap = new EecKeyMap(mLang);
     }
 
     public void detach() {
@@ -44,5 +49,9 @@ public class EecLocalManager {
 
     public Lang getLang() {
         return this.mLang;
+    }
+
+    public EecKeyMap getLocalKeyMap() {
+        return this.keyMap;
     }
 }
