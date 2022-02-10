@@ -64,6 +64,7 @@ public class ScanCodePostTestPopupWindow extends TscPopupWindow {
         this.setWidth(windowWidthPx);
         this.setHeight(ViewUtils.getUndisplayedViewSize(getContentView())[1]);
         this.setFocusable(true);
+        this.setClippingEnabled(false);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             this.setTouchModal(false);
         }
