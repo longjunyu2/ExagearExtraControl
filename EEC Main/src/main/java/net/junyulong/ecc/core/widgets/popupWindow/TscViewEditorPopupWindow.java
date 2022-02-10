@@ -365,7 +365,7 @@ public class TscViewEditorPopupWindow extends TscPopupWindow implements IEventSu
             dragButton.setLayoutParams(viewHelper.createParamsWithMargin(buttonSizePx, buttonSizePx,
                     Gravity.CENTER_VERTICAL));
             dragButton.setBackground(EEC.getInstance().getEecResourcesManager().
-                    getDrawable(EecImageResources.round_open_with_white_24dp));
+                    getDrawable(EecImageResources.ic_drag_move_white_24dp));
             dragButton.setClickable(false);
             dragButton.setFocusable(false);
             innerLayout.addView(dragButton);
