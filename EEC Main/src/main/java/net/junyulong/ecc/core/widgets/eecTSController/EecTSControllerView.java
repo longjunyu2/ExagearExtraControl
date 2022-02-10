@@ -261,11 +261,9 @@ public class EecTSControllerView extends FrameLayout implements EecInputViewPare
         switch (event.getEventType()) {
             case LayerVisibilityChanged:
                 // TODO: 当图层可见性发生变化时，同时控制图层内控件的可见性
-                Log.e("fuck", "visChanged");
                 return true;
             case LayerRemoved:
                 // TODO: 当图层被删除时，同时从屏幕上移除图层内的控件
-                Log.e("fuck", "layRemoved");
                 return true;
             case ViewModelEditRequest:
                 // 分发给编辑处理器处理

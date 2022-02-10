@@ -47,7 +47,6 @@ public class EventBus {
         this.mLoopThread = new EecBaseLoopThread(LOOP_PERIOD) {
             @Override
             public void loop() {
-                Log.d("fuck", "ok");
                 dispenseEvent();
             }
         };
@@ -118,7 +117,6 @@ public class EventBus {
     private void dispenseEvent() {
         BaseEvent currentEvent = mEventQueue.get();
         if (currentEvent == null) {
-            Log.v("fuck", "skip");
             return;
         }
         Log.e(TAG, "Get event. Type: " + currentEvent.getEventType().name());
