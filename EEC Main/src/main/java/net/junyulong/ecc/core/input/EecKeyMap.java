@@ -24,6 +24,7 @@ import java.util.HashMap;
 public class EecKeyMap {
 
     private HashMap<XServerKeyNames, KeyItem> keyboardMap;
+    private Lang lang;
 
     public EecKeyMap() {
         super();
@@ -40,7 +41,14 @@ public class EecKeyMap {
             case en:
                 initForAmericanKeyboardLayout();
                 break;
+            default:
+                throw new EecException("Lang is not supported: " + lang.name());
         }
+        this.lang = lang;
+    }
+
+    public Lang getLang() {
+        return this.lang;
     }
 
     private void initForAmericanKeyboardLayout() {
