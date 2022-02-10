@@ -82,6 +82,7 @@ public class LocalStrings {
     public static String Scan_Code_Test;
     public static String Post;
     public static String Next;
+    public static String Keyboard_View_Test;
 
     public static void initialize(Lang lang) {
         switch (lang) {
@@ -160,6 +161,7 @@ public class LocalStrings {
         Scan_Code_Test = "扫描码测试";
         Post = "发送";
         Next = "下一个";
+        Keyboard_View_Test = "键盘控件测试";
     }
 
     private static void initForEnglish() {
@@ -228,6 +230,7 @@ public class LocalStrings {
         Scan_Code_Test = "ScanCodeTest";
         Post = "Post";
         Next = "Next";
+        Keyboard_View_Test = "Keyboard View Test";
     }
 
     public static Lang getLangFormLocalName(String str) {

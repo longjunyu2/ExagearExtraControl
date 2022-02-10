@@ -219,8 +219,11 @@ public class EecTSControllerView extends FrameLayout implements EecInputViewPare
         // 注册事件订阅
         EventBus.getDefaultEventBus().register(this, ReceiveEventTypes);
         // 创建扫描码测试窗口
-        /*new ScanCodePostTestPopupWindow(getContext()).
-                showAtLocation(this, Gravity.START | Gravity.CENTER, 0, 0);*/
+        /* new ScanCodePostTestPopupWindow(getContext()).
+                showAtLocation(this, Gravity.START | Gravity.CENTER, 0, 0); */
+        // 创建键盘控件测试窗口
+        /* new KeyboardViewTestPopupWindow(getContext()).
+                showAtLocation(this, Gravity.START | Gravity.CENTER, 0, 0); */
     }
 
     @Override
