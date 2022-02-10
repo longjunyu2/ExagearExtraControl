@@ -17,6 +17,12 @@
 package net.junyulong.ecc.core.local;
 
 public enum Lang {
-    Chinese,
-    English
+    /*
+     * EEC WARNING:
+     * PLEASE DO NOT MODIFY THE VARIABLE NAMES OF THE FOLLOWING ENUMERATIONS,
+     * WHICH ARE DIRECTLY RELATED TO ADDITIONAL RESOURCES.
+     */
+
+    zh_cn,
+    en
 }

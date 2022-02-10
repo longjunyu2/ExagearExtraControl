@@ -17,11 +17,6 @@
 package net.junyulong.ecc.core.local;
 
 public class LocalStrings {
-
-    public static final String LOCAL_CHINESE = "Chinese";
-
-    public static final String LOCAL_ENGLISH = "English";
-
     public static String Accept;
     public static String Cancel;
     public static String Yes;
@@ -90,10 +85,10 @@ public class LocalStrings {
 
     public static void initialize(Lang lang) {
         switch (lang) {
-            case Chinese:
+            case zh_cn:
                 initForChinese();
                 break;
-            case English:
+            case en:
                 initForEnglish();
                 break;
         }
@@ -236,11 +231,9 @@ public class LocalStrings {
     }
 
     public static Lang getLangFormLocalName(String str) {
-        switch (str) {
-            case LOCAL_CHINESE:
-                return Lang.Chinese;
-            case LOCAL_ENGLISH:
-                return Lang.English;
+        for (Lang lang : Lang.values()) {
+            if (str.equals(lang.name()))
+                return lang;
         }
         return null;
     }
