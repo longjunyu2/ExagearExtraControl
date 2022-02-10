@@ -49,7 +49,7 @@ public class ScanCodePostTestPopupWindow extends TscPopupWindow {
     private float yPos;
     private final static int ButtonSizeDp = 20;
     private final int buttonSizePx;
-    private final static int MarginSizePDp = 5;
+    private final static int MarginSizeDp = 5;
     private final int marginSizePx;
     private final static int TextSizeSp = 13;
     private final static int WindowWidthDp = 100;
@@ -58,7 +58,7 @@ public class ScanCodePostTestPopupWindow extends TscPopupWindow {
         super(context);
         this.context = context;
         this.buttonSizePx = EEC.getInstance().getEecWindowManager().getPxFromDp(ButtonSizeDp);
-        this.marginSizePx = EEC.getInstance().getEecWindowManager().getPxFromDp(MarginSizePDp);
+        this.marginSizePx = EEC.getInstance().getEecWindowManager().getPxFromDp(MarginSizeDp);
         int windowWidthPx = EEC.getInstance().getEecWindowManager().getPxFromDp(WindowWidthDp);
         setContentView(createView());
         this.setWidth(windowWidthPx);
