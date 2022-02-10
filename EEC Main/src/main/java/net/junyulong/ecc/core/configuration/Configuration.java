@@ -16,8 +16,10 @@
 
 package net.junyulong.ecc.core.configuration;
 
+import net.junyulong.ecc.core.local.Lang;
+
 public class Configuration {
 
-    public String Local = "Chinese";
+    public String Local = Lang.zh_cn.name();
 
 }
