@@ -55,7 +55,7 @@ public class EecKeyMap {
         keyboardMap = new HashMap<>();
         for (XServerKeyNames key : XServerKeyNames.values()) {
             if (!key.enabled())
-                return;
+                continue;
             String[] symbols = null;
             switch (key) {
                 case KEY_Escape:
@@ -331,7 +331,7 @@ public class EecKeyMap {
         }
 
         public boolean hasSymbol() {
-            return !(symbols == null);
+            return symbols != null && symbols.length != 0;
         }
 
         public boolean isNone() {
@@ -340,6 +340,10 @@ public class EecKeyMap {
 
         public String getKeyName() {
             return key.name();
+        }
+
+        public String[] getSymbols() {
+            return this.symbols;
         }
     }
 }

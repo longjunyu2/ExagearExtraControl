@@ -18,26 +18,38 @@ package net.junyulong.ecc.core.widgets;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.support.v7.widget.AppCompatButton;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.RectF;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.RoundRectShape;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import net.junyulong.ecc.core.EEC;
 import net.junyulong.ecc.core.errors.EecException;
 import net.junyulong.ecc.core.input.EecKeyMap;
 import net.junyulong.ecc.core.input.XServerKeyNames;
+import net.junyulong.ecc.core.universal.ViewUtils;
+
+import java.util.Arrays;
 
 @SuppressLint("ViewConstructor")
 public class KeyboardView extends FrameLayout {
     private final Context context;
     private final EecKeyMap keyMap;
-    private KeySelectionChangedListener keySelectionChangedListener;
-
-    private final static float MIN_KEY_CELL_SIZE_DP = 30;
-    private final static int SCALE_TYPE_WIDTH = -1;
-    private final static int SCALE_TYPE_HEIGHT = -2;
-
     private final KeyboardParams keyboardParams;
+
+    @SuppressWarnings("unused")
+    private final static int SCALE_TYPE_HEIGHT = -1;
+    private final static int SCALE_TYPE_WIDTH = -2;
+    private final static int BackgroundColor = Color.parseColor("#E0E0E0");
+    private final static float MIN_KEY_CELL_SIZE_DP = 30;
+
+    private KeySelectionChangedListener keySelectionChangedListener;
 
     public KeyboardView(Context context, EecKeyMap keyMap, float scale) {
         super(context);
@@ -49,9 +61,12 @@ public class KeyboardView extends FrameLayout {
         keyboardParams.setKeyCellSize(
                 (int) (EEC.getInstance().getEecWindowManager().getPxFromDp(MIN_KEY_CELL_SIZE_DP) * scale)
         );
+        setBackgroundColor(BackgroundColor);
         init();
+        initReserved();
     }
 
+    @SuppressWarnings("unused")
     public KeyboardView(Context context, EecKeyMap keyMap, int scaleType, int size) {
         this(context, keyMap, (scaleType == SCALE_TYPE_WIDTH) ? size / 18.75f : size / 7f);
     }
@@ -74,6 +89,24 @@ public class KeyboardView extends FrameLayout {
         }
     }
 
+    private void initReserved() {
+        XServerKeyNames[] keyNames = {
+                XServerKeyNames.KEY_Print,
+                XServerKeyNames.KEY_ScrollLock,
+                XServerKeyNames.KEY_Pause,
+                XServerKeyNames.KEY_LMeta,
+                XServerKeyNames.KEY_RMeta,
+                XServerKeyNames.KEY_Menu
+        };
+        for (XServerKeyNames keyName : keyNames) {
+            try {
+                addView(new KeyboardButton(keyboardParams.getKeyParams(keyName)));
+            } catch (UnsupportedKeyException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     @Override
     public void setLayoutParams(ViewGroup.LayoutParams params) {
         params.width = keyboardParams.getKeyboardViewWidth();
@@ -81,21 +114,110 @@ public class KeyboardView extends FrameLayout {
         super.setLayoutParams(params);
     }
 
-    private class KeyboardButton extends AppCompatButton {
-        private XServerKeyNames keyNames;
+    private class KeyboardButton extends FrameLayout {
+        private final XServerKeyNames keyNames;
+        private final int height;
         private boolean selected;
+        int[] insetMargins = {15, 5, 15, 25};
+        float outerRadius = 10;
+        float innerRadius = 5;
+        int edgeSize = 2;
+        int edgeColor = Color.BLACK;
+        int innerColor = Color.WHITE;
+        int outerColor = Color.parseColor("#B3B3B3");
+        int symbolColor = Color.BLACK;
+        int mainSymbolSizeSp = 7;
+        int viceSymbolSizeSp = mainSymbolSizeSp - 1;
+        int symbolOffset = 5;
 
         public KeyboardButton(KeyParams keyParams) {
             super(context);
+            this.keyNames = keyParams.keyNames;
+            this.height = keyParams.height;
             this.setLayoutParams(new FrameLayout.LayoutParams(keyParams.width, keyParams.height));
             this.setX(keyParams.x);
             this.setY(keyParams.y);
             this.setClickable(true);
             this.setOnClickListener(v -> {
-                KeyboardView.this.keySelectionChangedListener.onKeySelectionChanged(keyNames, !selected);
-                selected = !selected;
+                KeySelectionChangedListener listener = KeyboardView.this.keySelectionChangedListener;
+                if (listener != null) {
+                    KeyboardView.this.keySelectionChangedListener.onKeySelectionChanged(keyNames, !selected);
+                    selected = !selected;
+                }
             });
-            // TODO: 使用FrameLayout重写组合控件
+            this.setBackground(createKeyboardButtonDrawable());
+            addSymbol();
+        }
+
+        private void addSymbol() {
+            if (getChildCount() != 0)
+                removeAllViews();
+            EecKeyMap.KeyItem keyItem =
+                    keyMap.getKeyboardMap().get(keyNames);
+            if (keyItem != null && keyItem.hasSymbol()) {
+                String[] symbols = keyItem.getSymbols();
+                if (symbols.length == 1) {
+                    TextView symbolText = createKeyboardSymbolView(symbols[0], mainSymbolSizeSp);
+                    symbolText.setX(insetMargins[0] + symbolOffset);
+                    symbolText.setY(insetMargins[1]);
+                    addView(symbolText);
+                } else if (symbols.length == 2) {
+                    TextView viceSymbolText = createKeyboardSymbolView(symbols[0], viceSymbolSizeSp);
+                    viceSymbolText.setX(insetMargins[0] + symbolOffset);
+                    viceSymbolText.setY(insetMargins[1]);
+                    addView(viceSymbolText);
+
+                    TextView mainSymbolText = createKeyboardSymbolView(symbols[1], viceSymbolSizeSp);
+                    mainSymbolText.setX(insetMargins[0] + symbolOffset);
+                    mainSymbolText.setY(height - insetMargins[3]
+                            - ViewUtils.getUndisplayedViewSize(mainSymbolText)[1]);
+                    addView(mainSymbolText);
+                }
+            } else {
+                setClickable(false);
+            }
+        }
+
+        private Drawable createKeyboardButtonDrawable() {
+            Paint paint;
+
+            float[] outerR = new float[8];
+            Arrays.fill(outerR, outerRadius);
+            float[] innerR = new float[8];
+            Arrays.fill(innerR, innerRadius);
+            RectF insetRect = new RectF(insetMargins[0], insetMargins[1], insetMargins[2], insetMargins[3]);
+
+            ShapeDrawable shapeDrawableEdge = new ShapeDrawable(new RoundRectShape(outerR, null, innerR));
+            paint = shapeDrawableEdge.getPaint();
+            paint.setColor(edgeColor);
+            paint.setStyle(Paint.Style.FILL);
+
+            ShapeDrawable shapeDrawableInner = new ShapeDrawable(new RoundRectShape(outerR, null, innerR));
+            paint = shapeDrawableInner.getPaint();
+            paint.setColor(innerColor);
+            paint.setStyle(Paint.Style.FILL);
+
+            ShapeDrawable shapeDrawableOuter = new ShapeDrawable(new RoundRectShape(outerR, insetRect, innerR));
+            paint = shapeDrawableOuter.getPaint();
+            paint.setColor(outerColor);
+            paint.setStyle(Paint.Style.FILL);
+
+            Drawable[] drawableLayers = new Drawable[]{shapeDrawableEdge, shapeDrawableInner, shapeDrawableOuter};
+            LayerDrawable layerDrawable = new LayerDrawable(drawableLayers);
+            layerDrawable.setLayerInset(1, edgeSize, edgeSize, edgeSize, edgeSize);
+            layerDrawable.setLayerInset(2, edgeSize, edgeSize, edgeSize, edgeSize);
+
+            return layerDrawable;
+        }
+
+        private TextView createKeyboardSymbolView(String symbol, int textSizeSp) {
+            TextView textView = new TextView(context);
+            textView.setText(symbol);
+            textView.setTextSize(textSizeSp);
+            textView.setTextColor(symbolColor);
+            textView.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT));
+            return textView;
         }
     }
 
