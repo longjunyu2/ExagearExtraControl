@@ -24,6 +24,7 @@ import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.StateListDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -46,15 +47,20 @@ public class KeyboardView extends FrameLayout {
     @SuppressWarnings("unused")
     private final static int SCALE_TYPE_HEIGHT = -1;
     private final static int SCALE_TYPE_WIDTH = -2;
+    public final static int PERFORM_CLICK = -1;
+    public final static int PERFORM_SELECT = -2;
     private final static int BackgroundColor = Color.parseColor("#E0E0E0");
     private final static float MIN_KEY_CELL_SIZE_DP = 30;
 
     private KeySelectionChangedListener keySelectionChangedListener;
+    private KeyClickListener keyClickListener;
+    private int performType;
 
-    public KeyboardView(Context context, EecKeyMap keyMap, float scale) {
+    public KeyboardView(Context context, EecKeyMap keyMap, float scale, int performType) {
         super(context);
         this.context = context;
         this.keyMap = keyMap;
+        this.performType = performType;
         if (scale < 1)
             throw new EecException("Unsupported scale size: " + scale);
         keyboardParams = new KeyboardParams();
@@ -63,7 +69,15 @@ public class KeyboardView extends FrameLayout {
         );
         setBackgroundColor(BackgroundColor);
         init();
-        initReserved();
+    }
+
+    public KeyboardView(Context context, EecKeyMap keyMap, float scale) {
+        this(context, keyMap, scale, PERFORM_SELECT);
+    }
+
+    @SuppressWarnings("unused")
+    public KeyboardView(Context context, EecKeyMap keyMap, int performType, int scaleType, int size) {
+        this(context, keyMap, (scaleType == SCALE_TYPE_WIDTH) ? size / 18.75f : size / 7f, performType);
     }
 
     @SuppressWarnings("unused")
@@ -73,6 +87,10 @@ public class KeyboardView extends FrameLayout {
 
     public void setOnKeySelectionChangedListener(KeySelectionChangedListener listener) {
         this.keySelectionChangedListener = listener;
+    }
+
+    public void setOnKeyClickListener(KeyClickListener listener) {
+        this.keyClickListener = listener;
     }
 
     private void init() {
@@ -87,6 +105,7 @@ public class KeyboardView extends FrameLayout {
                 }
             }
         }
+        initReserved();
     }
 
     private void initReserved() {
@@ -107,6 +126,11 @@ public class KeyboardView extends FrameLayout {
         }
     }
 
+    public void setPerformType(int type) {
+        this.performType = type;
+        init();
+    }
+
     @Override
     public void setLayoutParams(ViewGroup.LayoutParams params) {
         params.width = keyboardParams.getKeyboardViewWidth();
@@ -115,20 +139,36 @@ public class KeyboardView extends FrameLayout {
     }
 
     private class KeyboardButton extends FrameLayout {
+        private final int[] DEFAULT_INSET_MARGINS = {15, 5, 15, 25};
+        private final static float DEFAULT_OUTER_RADIUS = 10;
+        private final static float DEFAULT_INNER_RADIUS = 5;
+        private final static int DEFAULT_EDGE_SIZE = 2;
+        private final static int DEFAULT_EDGE_COLOR = Color.BLACK;
+        private final static int DEFAULT_INNER_COLOR = Color.WHITE;
+        private final static int DEFAULT_INNER_PRESSED_COLOR = 0xFFB3B3B3;
+        private final static int DEFAULT_OUTER_COLOR = 0xFFB3B3B3;
+        private final static int DEFAULT_OUTER_PRESSED_COLOR = 0xFF737373;
+        private final static int DEFAULT_SYMBOL_COLOR = Color.BLACK;
+        private final static int DEFAULT_MAIN_SYMBOL_SIZE = 7;
+        private final static int DEFAULT_VICE_SYMBOL_SIZE = DEFAULT_MAIN_SYMBOL_SIZE - 1;
+        private final static int DEFAULT_SYMBOL_OFFSET = 5;
+
         private final XServerKeyNames keyNames;
         private final int height;
-        private boolean selected;
-        int[] insetMargins = {15, 5, 15, 25};
-        float outerRadius = 10;
-        float innerRadius = 5;
-        int edgeSize = 2;
-        int edgeColor = Color.BLACK;
-        int innerColor = Color.WHITE;
-        int outerColor = Color.parseColor("#B3B3B3");
-        int symbolColor = Color.BLACK;
-        int mainSymbolSizeSp = 7;
-        int viceSymbolSizeSp = mainSymbolSizeSp - 1;
-        int symbolOffset = 5;
+        private boolean selected = false;
+        int[] insetMargins = DEFAULT_INSET_MARGINS;
+        float outerRadius = DEFAULT_OUTER_RADIUS;
+        float innerRadius = DEFAULT_INNER_RADIUS;
+        int edgeSize = DEFAULT_EDGE_SIZE;
+        int edgeColor = DEFAULT_EDGE_COLOR;
+        int innerColor = DEFAULT_INNER_COLOR;
+        int innerPressedColor = DEFAULT_INNER_PRESSED_COLOR;
+        int outerColor = DEFAULT_OUTER_COLOR;
+        int outerPressedColor = DEFAULT_OUTER_PRESSED_COLOR;
+        int symbolColor = DEFAULT_SYMBOL_COLOR;
+        int mainSymbolSizeSp = DEFAULT_MAIN_SYMBOL_SIZE;
+        int viceSymbolSizeSp = DEFAULT_VICE_SYMBOL_SIZE;
+        int symbolOffset = DEFAULT_SYMBOL_OFFSET;
 
         public KeyboardButton(KeyParams keyParams) {
             super(context);
@@ -139,14 +179,38 @@ public class KeyboardView extends FrameLayout {
             this.setY(keyParams.y);
             this.setClickable(true);
             this.setOnClickListener(v -> {
-                KeySelectionChangedListener listener = KeyboardView.this.keySelectionChangedListener;
-                if (listener != null) {
-                    KeyboardView.this.keySelectionChangedListener.onKeySelectionChanged(keyNames, !selected);
-                    selected = !selected;
-                }
+                if (performType == PERFORM_CLICK) {
+                    KeyClickListener listener = keyClickListener;
+                    if (listener != null)
+                        listener.onKeyClick(keyNames);
+                } else if (performType == PERFORM_SELECT) {
+                    KeySelectionChangedListener listener = KeyboardView.this.keySelectionChangedListener;
+                    if (listener != null) {
+                        setSelected(!selected);
+                        KeyboardView.this.keySelectionChangedListener.onKeySelectionChanged(keyNames, selected);
+                    }
+                } else
+                    throw new EecException("Unknown Perform Type: " + performType);
             });
             this.setBackground(createKeyboardButtonDrawable());
             addSymbol();
+        }
+
+        public void setSelected(boolean selected) {
+            if (performType == PERFORM_SELECT) {
+                this.selected = selected;
+                if (selected) {
+                    edgeColor = Color.RED;
+                    symbolColor = Color.RED;
+                    edgeSize = 5;
+                } else {
+                    edgeColor = DEFAULT_EDGE_COLOR;
+                    symbolColor = DEFAULT_SYMBOL_COLOR;
+                    edgeSize = DEFAULT_EDGE_SIZE;
+                }
+                setBackground(createKeyboardButtonDrawable());
+                addSymbol();
+            }
         }
 
         private void addSymbol() {
@@ -187,6 +251,7 @@ public class KeyboardView extends FrameLayout {
             Arrays.fill(innerR, innerRadius);
             RectF insetRect = new RectF(insetMargins[0], insetMargins[1], insetMargins[2], insetMargins[3]);
 
+            // released
             ShapeDrawable shapeDrawableEdge = new ShapeDrawable(new RoundRectShape(outerR, null, innerR));
             paint = shapeDrawableEdge.getPaint();
             paint.setColor(edgeColor);
@@ -202,12 +267,33 @@ public class KeyboardView extends FrameLayout {
             paint.setColor(outerColor);
             paint.setStyle(Paint.Style.FILL);
 
-            Drawable[] drawableLayers = new Drawable[]{shapeDrawableEdge, shapeDrawableInner, shapeDrawableOuter};
-            LayerDrawable layerDrawable = new LayerDrawable(drawableLayers);
+            LayerDrawable layerDrawable = new LayerDrawable(
+                    new Drawable[]{shapeDrawableEdge, shapeDrawableInner, shapeDrawableOuter});
             layerDrawable.setLayerInset(1, edgeSize, edgeSize, edgeSize, edgeSize);
             layerDrawable.setLayerInset(2, edgeSize, edgeSize, edgeSize, edgeSize);
 
-            return layerDrawable;
+            // pressed
+            ShapeDrawable shapeDrawableInnerPressed = new ShapeDrawable(new RoundRectShape(outerR, null, innerR));
+            paint = shapeDrawableInnerPressed.getPaint();
+            paint.setColor(innerPressedColor);
+            paint.setStyle(Paint.Style.FILL);
+
+            ShapeDrawable shapeDrawableOuterPressed = new ShapeDrawable(new RoundRectShape(outerR, insetRect, innerR));
+            paint = shapeDrawableOuterPressed.getPaint();
+            paint.setColor(outerPressedColor);
+            paint.setStyle(Paint.Style.FILL);
+
+            LayerDrawable layerDrawablePressed = new LayerDrawable(
+                    new Drawable[]{shapeDrawableEdge, shapeDrawableInnerPressed, shapeDrawableOuterPressed});
+            layerDrawable.setLayerInset(1, edgeSize, edgeSize, edgeSize, edgeSize);
+            layerDrawable.setLayerInset(2, edgeSize, edgeSize, edgeSize, edgeSize);
+
+            // selector
+            StateListDrawable stateListDrawable = new StateListDrawable();
+            stateListDrawable.addState(new int[]{/* released */-android.R.attr.state_pressed}, layerDrawable);
+            stateListDrawable.addState(new int[]{/* pressed  */ android.R.attr.state_pressed}, layerDrawablePressed);
+
+            return stateListDrawable;
         }
 
         private TextView createKeyboardSymbolView(String symbol, int textSizeSp) {
@@ -223,6 +309,10 @@ public class KeyboardView extends FrameLayout {
 
     public interface KeySelectionChangedListener {
         void onKeySelectionChanged(XServerKeyNames keyNames, boolean selected);
+    }
+
+    public interface KeyClickListener {
+        void onKeyClick(XServerKeyNames keyNames);
     }
 
     private static class KeyboardParams {
