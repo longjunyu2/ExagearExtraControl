@@ -26,6 +26,7 @@ import android.graphics.drawable.LayerDrawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.StateListDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.TextView;
@@ -36,6 +37,7 @@ import net.junyulong.ecc.core.input.EecKeyMap;
 import net.junyulong.ecc.core.input.XServerKeyNames;
 import net.junyulong.ecc.core.universal.ViewUtils;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 @SuppressLint("ViewConstructor")
@@ -131,6 +133,18 @@ public class KeyboardView extends FrameLayout {
         init();
     }
 
+    public void setPreSelectedKeys(XServerKeyNames[] preSelectedKeys) {
+        ArrayList<XServerKeyNames> keyNamesList = new ArrayList<>(Arrays.asList(preSelectedKeys));
+        if (performType == PERFORM_SELECT) {
+            for (int i = 0; i < getChildCount(); i++) {
+                View v = getChildAt(i);
+                if (v instanceof KeyboardButton &&
+                        keyNamesList.contains(((KeyboardButton) v).keyNames))
+                    ((KeyboardButton) v).setKeySelected(true);
+            }
+        }
+    }
+
     @Override
     public void setLayoutParams(ViewGroup.LayoutParams params) {
         params.width = keyboardParams.getKeyboardViewWidth();
@@ -184,10 +198,10 @@ public class KeyboardView extends FrameLayout {
                     if (listener != null)
                         listener.onKeyClick(keyNames);
                 } else if (performType == PERFORM_SELECT) {
-                    KeySelectionChangedListener listener = KeyboardView.this.keySelectionChangedListener;
+                    KeySelectionChangedListener listener = keySelectionChangedListener;
                     if (listener != null) {
-                        setSelected(!selected);
-                        KeyboardView.this.keySelectionChangedListener.onKeySelectionChanged(keyNames, selected);
+                        setKeySelected(!selected);
+                        keySelectionChangedListener.onKeySelectionChanged(keyNames, selected);
                     }
                 } else
                     throw new EecException("Unknown Perform Type: " + performType);
@@ -196,7 +210,7 @@ public class KeyboardView extends FrameLayout {
             addSymbol();
         }
 
-        public void setSelected(boolean selected) {
+        public void setKeySelected(boolean selected) {
             if (performType == PERFORM_SELECT) {
                 this.selected = selected;
                 if (selected) {
