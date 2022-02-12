@@ -19,6 +19,7 @@ package net.junyulong.ecc.core;
 import com.eltechs.axs.activities.StartupActivity;
 
 public class ExagearUtils {
+    public final static String TAG_CONTROLS_INFO = "CONTROLS_INFO";
 
     // 关闭AXS程序
     public static void shutdownAXSApplication() {
@@ -28,5 +29,16 @@ public class ExagearUtils {
     // 设置XServer视图水平拉伸
     public static void setHorizontalStretchEnabled(boolean enabled) {
         EEC.getInstance().getContext().getXServerView().setHorizontalStretchEnabled(enabled);
+    }
+
+    // 显示Controls信息对话框
+    public static void showControlsInfoDialog() {
+        EEC.getInstance().getContext().getControls().createInfoDialog().show(
+                EEC.getInstance().getContext().getActivity().getSupportFragmentManager(), TAG_CONTROLS_INFO);
+    }
+
+    // 终止XServer服务
+    public static void shutdownXServerService() {
+        EEC.getInstance().getContext().getXServerView().getXServerFacade().injectKeyType((byte) 0);
     }
 }
