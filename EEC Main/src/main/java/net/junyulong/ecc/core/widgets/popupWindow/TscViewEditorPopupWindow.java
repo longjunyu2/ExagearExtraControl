@@ -521,7 +521,7 @@ public class TscViewEditorPopupWindow extends TscPopupWindow implements IEventSu
                         Top_to_Top_of.name(),
                         Top_to_Bottom_of.name(),
                         Bottom_to_Top_of.name(),
-                        Bottom_to_Top_of.name()
+                        Bottom_to_Bottom_of.name()
                 );
             else
                 throw new EecException("Unknown RefType: " + refType.name());
