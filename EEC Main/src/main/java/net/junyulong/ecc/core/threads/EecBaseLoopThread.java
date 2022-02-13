@@ -76,7 +76,6 @@ public abstract class EecBaseLoopThread implements EecThread {
                         sleep(sleepTime);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
-                        throw new RuntimeException(e.getMessage());
                     }
                 }
             }
