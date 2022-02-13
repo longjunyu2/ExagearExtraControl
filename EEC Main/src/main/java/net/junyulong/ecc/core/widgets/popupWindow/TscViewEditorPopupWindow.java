@@ -25,6 +25,7 @@ import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -34,6 +35,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import net.junyulong.ecc.core.EEC;
+import net.junyulong.ecc.core.dialogs.TextEditorDialogBuilder;
 import net.junyulong.ecc.core.errors.EecContentViewNullException;
 import net.junyulong.ecc.core.errors.EecElementRepeatException;
 import net.junyulong.ecc.core.errors.EecException;
@@ -46,6 +48,7 @@ import net.junyulong.ecc.core.eventbus.events.viewModel.ViewModelUpdatedEvent;
 import net.junyulong.ecc.core.eventbus.interfaces.IEventSubscriber;
 import net.junyulong.ecc.core.local.LocalStrings;
 import net.junyulong.ecc.core.model.layout.EecLayoutModelWrapper;
+import net.junyulong.ecc.core.model.layout.layer.view.EecInputViewModel;
 import net.junyulong.ecc.core.resource.EecColorResources;
 import net.junyulong.ecc.core.resource.EecDrawableResources;
 import net.junyulong.ecc.core.resource.EecImageResources;
@@ -118,6 +121,8 @@ public class TscViewEditorPopupWindow extends TscPopupWindow implements IEventSu
 
     private final ViewHelper viewHelper;
 
+    private final DialogHelper dialogHelper;
+
     // 更新器列表
     private final ArrayList<ViewUpdaterAndEventConsumer> updaterList;
 
@@ -145,6 +150,7 @@ public class TscViewEditorPopupWindow extends TscPopupWindow implements IEventSu
         // 初始化试图创建器
         viewCreator = new ViewCreator();
         viewHelper = new ViewHelper();
+        dialogHelper = new DialogHelper();
     }
 
     // 实装该对象
@@ -228,6 +234,14 @@ public class TscViewEditorPopupWindow extends TscPopupWindow implements IEventSu
     private void innerContainerUpdate() {
         for (ViewUpdaterAndEventConsumer updater : updaterList)
             updater.update();
+    }
+
+    private void appliedModify() {
+        // 更新控件
+        parentInterface.getDeployer().updateView(childInterface);
+        childInterface.viewUpdate(EecInputViewUpdateType.WithChildren);
+        // 更新编辑视图
+        innerContainerUpdate();
     }
 
     @Override
@@ -463,6 +477,9 @@ public class TscViewEditorPopupWindow extends TscPopupWindow implements IEventSu
             LocalViewHelper localViewHelper = new LocalViewHelper();
 
             int offsetButtonSizePx = EEC.getInstance().getEecWindowManager().getPxFromDp(40);
+            EecInputViewModel.Bind.BindInfo targetBindInfo =
+                    refType == RefType.Horizontal ? childInterface.getModel().getBind().horizontal
+                            : childInterface.getModel().getBind().vertical;
 
             // 外容器
             LinearLayout layout = new LinearLayout(context);
@@ -528,13 +545,8 @@ public class TscViewEditorPopupWindow extends TscPopupWindow implements IEventSu
             spinnerBind.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    if (refType == RefType.Horizontal)
-                        childInterface.getModel().getBind().horizontal.referenceMode = (String) parent.getItemAtPosition(position);
-                    else
-                        childInterface.getModel().getBind().vertical.referenceMode = (String) parent.getItemAtPosition(position);
-                    // 更新控件
-                    parentInterface.getDeployer().updateView(childInterface);
-                    childInterface.viewUpdate(EecInputViewUpdateType.WithChildren);
+                    targetBindInfo.referenceMode = (String) parent.getItemAtPosition(position);
+                    appliedModify();
                 }
 
                 @Override
@@ -551,51 +563,32 @@ public class TscViewEditorPopupWindow extends TscPopupWindow implements IEventSu
             layoutItem.addView(offsetContainer);
             // 按钮: 减小偏移量
             offsetContainer.addView(viewHelper.createButton(v -> {
-                if (refType == RefType.Horizontal)
-                    childInterface.getModel().getBind().horizontal.offset -= CellStep;
-                else
-                    childInterface.getModel().getBind().vertical.offset -= CellStep;
-                // 更新控件
-                parentInterface.getDeployer().updateView(childInterface);
-                childInterface.viewUpdate(EecInputViewUpdateType.WithChildren);
-                // 更新编辑视图
-                innerContainerUpdate();
+                targetBindInfo.offset -= CellStep;
+                appliedModify();
             }, offsetButtonSizePx, offsetButtonSizePx, LocalStrings.Symbol_Left));
             // 编辑框: 偏移量
-            EditText editOffset = viewHelper.createEditText(v -> {
-                // TODO: 添加偏移量编辑功能
-            });
+            EditText editOffset = viewHelper.createEditText();
+            editOffset.setOnClickListener(v -> dialogHelper.showEditorDialogForInteger(
+                    (dialog, editText, text) -> {
+                        targetBindInfo.offset = Integer.parseInt(text);
+                        appliedModify();
+                    }, LocalStrings.Offset, editOffset.getText().toString()));
             offsetContainer.addView(editOffset);
             // 按钮: 增加偏移量
             offsetContainer.addView(viewHelper.createButton(v -> {
-                if (refType == RefType.Horizontal)
-                    childInterface.getModel().getBind().horizontal.offset += CellStep;
-                else
-                    childInterface.getModel().getBind().vertical.offset += CellStep;
-                // 更新控件
-                parentInterface.getDeployer().updateView(childInterface);
-                childInterface.viewUpdate(EecInputViewUpdateType.WithChildren);
-                // 更新编辑视图
-                innerContainerUpdate();
+                targetBindInfo.offset += CellStep;
+                appliedModify();
             }, offsetButtonSizePx, offsetButtonSizePx, LocalStrings.Symbol_Right));
             // 添加更新器
             updaterList.add(new ViewUpdaterAndEventConsumer() {
                 @Override
                 public void update() {
                     // 更新绑定的对象Id
-                    textObjectId.post(() -> textObjectId.setText((refType == RefType.Horizontal)
-                            ? childInterface.getModel().getBind().horizontal.referenceId
-                            : childInterface.getModel().getBind().vertical.referenceId));
+                    textObjectId.post(() -> textObjectId.setText(targetBindInfo.referenceId));
                     // 更新偏移量
-                    editOffset.post(() -> editOffset.setText(String.valueOf((refType == RefType.Horizontal)
-                            ? childInterface.getModel().getBind().horizontal.offset
-                            : childInterface.getModel().getBind().vertical.offset)));
+                    editOffset.post(() -> editOffset.setText(String.valueOf(targetBindInfo.offset)));
                     // 更新绑定类型
-                    spinnerBind.post(() -> spinnerBind.setSelection(bindTypeList.indexOf(
-                            (refType == RefType.Horizontal)
-                                    ? childInterface.getModel().getBind().horizontal.referenceMode
-                                    : childInterface.getModel().getBind().vertical.referenceMode
-                    )));
+                    spinnerBind.post(() -> spinnerBind.setSelection(bindTypeList.indexOf(targetBindInfo.referenceMode)));
                 }
 
                 @Override
@@ -616,51 +609,49 @@ public class TscViewEditorPopupWindow extends TscPopupWindow implements IEventSu
                 public EditText editHeight;
 
                 public LinearLayout createParamEditItemContainer(int paramType) {
+                    EecInputViewModel.Param targetParam = childInterface.getModel().getParam();
+
                     // 容器
-                    LinearLayout container = viewHelper.createItemContainerView(
-                            paramType == Width ? LocalStrings.Width : LocalStrings.Height
-                    );
+                    String itemName = paramType == Width ? LocalStrings.Width : LocalStrings.Height;
+                    LinearLayout container = viewHelper.createItemContainerView(itemName);
                     // 按钮: 减小
                     container.addView(viewHelper.createButton(v -> {
-                        int paramSize = paramType == Width
-                                ? childInterface.getModel().getParam().width
-                                : childInterface.getModel().getParam().height;
+                        int paramSize = paramType == Width ? targetParam.width : targetParam.height;
                         if (paramSize >= CellStep) {
                             if (paramType == Width)
-                                childInterface.getModel().getParam().width -= CellStep;
+                                targetParam.width -= CellStep;
                             else
-                                childInterface.getModel().getParam().height -= CellStep;
+                                targetParam.height -= CellStep;
                         } else {
                             if (paramType == Width)
-                                childInterface.getModel().getParam().width = 0;
+                                targetParam.width = 0;
                             else
-                                childInterface.getModel().getParam().height = 0;
+                                targetParam.height = 0;
                         }
-                        // 更新控件
-                        parentInterface.getDeployer().updateView(childInterface);
-                        childInterface.viewUpdate(EecInputViewUpdateType.WithChildren);
-                        // 更新编辑视图
-                        innerContainerUpdate();
+                        appliedModify();
                     }, offsetButtonSizePx, offsetButtonSizePx, LocalStrings.Symbol_Left));
-                    // 编辑框: 控件宽
-                    EditText editView = viewHelper.createEditText(v -> {
-                        // TODO: 添加编辑功能
-                    });
+                    // 编辑框: 控件宽/控件高
+                    EditText editView = viewHelper.createEditText();
+                    editView.setOnClickListener(v -> dialogHelper.showEditorDialogForInteger(
+                            (dialog, editText, text) -> {
+                                if (paramType == Width)
+                                    targetParam.width = Integer.parseInt(text);
+                                else if (paramType == Height)
+                                    targetParam.height = Integer.parseInt(text);
+                                appliedModify();
+                            }, itemName, editView.getText().toString()));
                     container.addView(editView);
                     if (paramType == Width)
                         editWidth = editView;
-                    else editHeight = editView;
+                    else
+                        editHeight = editView;
                     // 按钮: 增加
                     container.addView(viewHelper.createButton(v -> {
                         if (paramType == Width)
-                            childInterface.getModel().getParam().width += CellStep;
+                            targetParam.width += CellStep;
                         else
-                            childInterface.getModel().getParam().height += CellStep;
-                        // 更新控件
-                        parentInterface.getDeployer().updateView(childInterface);
-                        childInterface.viewUpdate(EecInputViewUpdateType.WithChildren);
-                        // 更新编辑视图
-                        innerContainerUpdate();
+                            targetParam.height += CellStep;
+                        appliedModify();
                     }, offsetButtonSizePx, offsetButtonSizePx, LocalStrings.Symbol_Right));
                     return container;
                 }
@@ -693,6 +684,7 @@ public class TscViewEditorPopupWindow extends TscPopupWindow implements IEventSu
                     localViewHelper.editHeight.post(() -> localViewHelper.editHeight.setText(String.valueOf(
                             childInterface.getModel().getParam().height)));
                 }
+
                 @Override
                 public boolean onReceiveEvent(BaseEvent event) {
                     return false;
@@ -767,7 +759,7 @@ public class TscViewEditorPopupWindow extends TscPopupWindow implements IEventSu
         }
 
         // 创建编辑框
-        private EditText createEditText(View.OnClickListener clickListener) {
+        private EditText createEditText() {
             EditText editView = new EditText(context);
             editView.setTextSize(TextSizeSp);
             LinearLayout.LayoutParams editParams = viewHelper.createParamsWithMargin(ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -778,7 +770,6 @@ public class TscViewEditorPopupWindow extends TscPopupWindow implements IEventSu
             editView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
             editView.setTextColor(Color.parseColor(EecColorResources.ColorHintText));
             editView.setFocusableInTouchMode(false);
-            editView.setOnClickListener(clickListener);
             return editView;
         }
 
@@ -799,6 +790,25 @@ public class TscViewEditorPopupWindow extends TscPopupWindow implements IEventSu
         private UnityThemeButton createButton(View.OnClickListener clickListener, String text) {
             return createButton(clickListener, ViewGroup.LayoutParams.WRAP_CONTENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT, text);
+        }
+    }
+
+    private class DialogHelper {
+        public void showEditorDialogForInteger(TextEditorDialogBuilder.OnTextConfirmedListener confirmedListener, String title, String text) {
+            new TextEditorDialogBuilder(context)
+                    .setTitle(title)
+                    .setPositiveButton(LocalStrings.Accept, (dialog, editText, text1) -> {
+                        try {
+                            confirmedListener.onTextConfirmed(dialog, editText, text1);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    })
+                    .setEnterAsPositive(true)
+                    .setInputType(EditorInfo.TYPE_CLASS_PHONE)
+                    .setText(text)
+                    .create()
+                    .show();
         }
     }
 
