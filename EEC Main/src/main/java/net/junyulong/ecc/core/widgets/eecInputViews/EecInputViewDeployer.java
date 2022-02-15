@@ -185,8 +185,8 @@ public class EecInputViewDeployer {
     }
 
     private HashSet<String> getWeakBoundChildViewsId(String sourceId) {
-        HashSet<String> result = new HashSet<>();
         HashSet<String> idHashSet = getStrongBoundChildViewsId(sourceId);
+        HashSet<String> result = new HashSet<>(idHashSet);
         for (String id : idHashSet) {
             result.addAll(getWeakBoundChildViewsId(id));
         }
