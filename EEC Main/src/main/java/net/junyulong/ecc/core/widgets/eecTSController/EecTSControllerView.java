@@ -20,7 +20,6 @@ import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -246,6 +245,7 @@ public class EecTSControllerView extends FrameLayout implements EecInputViewPare
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
+        // TODO: 修复物理按键事件存在的被拦截问题
         if (event.getKeyCode() == KeyEvent.KEYCODE_ESCAPE && event.getAction() == KeyEvent.ACTION_DOWN) {
             new AlertDialog.Builder(getContext())
                     .setPositiveButton(LocalStrings.Accept, (dialog, which) ->

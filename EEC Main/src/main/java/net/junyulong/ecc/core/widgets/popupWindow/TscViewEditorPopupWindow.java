@@ -33,6 +33,7 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import net.junyulong.ecc.core.EEC;
 import net.junyulong.ecc.core.dialogs.TextEditorDialogBuilder;
@@ -44,6 +45,7 @@ import net.junyulong.ecc.core.eventbus.base.BaseEvent;
 import net.junyulong.ecc.core.eventbus.enums.EventType;
 import net.junyulong.ecc.core.eventbus.events.viewModel.ViewModelDraggedFinishedEvent;
 import net.junyulong.ecc.core.eventbus.events.viewModel.ViewModelDraggingEvent;
+import net.junyulong.ecc.core.eventbus.events.viewModel.ViewModelEditRequestEvent;
 import net.junyulong.ecc.core.eventbus.events.viewModel.ViewModelUpdatedEvent;
 import net.junyulong.ecc.core.eventbus.interfaces.IEventSubscriber;
 import net.junyulong.ecc.core.local.LocalStrings;
@@ -66,6 +68,7 @@ import java.util.List;
 import static android.app.AlertDialog.THEME_DEVICE_DEFAULT_DARK;
 import static net.junyulong.ecc.core.eventbus.enums.EventType.ViewModelDraggedFinished;
 import static net.junyulong.ecc.core.eventbus.enums.EventType.ViewModelDragging;
+import static net.junyulong.ecc.core.eventbus.enums.EventType.ViewModelEditRequest;
 import static net.junyulong.ecc.core.eventbus.enums.EventType.ViewModelUpdated;
 import static net.junyulong.ecc.core.widgets.eecTSController.EecTSControllerView.ParentId;
 import static net.junyulong.ecc.core.widgets.eecInputViews.EecInputViewAlignBindType.*;
@@ -135,6 +138,9 @@ public class TscViewEditorPopupWindow extends TscPopupWindow implements IEventSu
 
     // 单位步长
     private final static int CellStep = 2;
+
+    // 上一个父视图
+    private View lastParentView;
 
     public TscViewEditorPopupWindow(Context context, EecInputViewParentInterface parentInterface) {
         super(context);
@@ -247,7 +253,6 @@ public class TscViewEditorPopupWindow extends TscPopupWindow implements IEventSu
     @Override
     public void dismiss() {
         super.dismiss();
-        //throw new EecException();
     }
 
     @Override
@@ -259,18 +264,20 @@ public class TscViewEditorPopupWindow extends TscPopupWindow implements IEventSu
             super.showAtLocation(parent, gravity, x, y);
             // 窗口内部更新，以便仍显示在指定位置上
             innerWindowUpdate();
+            lastParentView = parent;
         }
     }
 
     @Override
-    public void showAsDropDown(View anchor, int xoff, int yoff, int gravity) {
+    public void showAsDropDown(View anchor, int xOff, int yOff, int gravity) {
         // 当视图未创建时显示窗口，抛出异常
         if (!uiCreated)
             throw new EecContentViewNullException("Content view has not been created!");
         else {
-            super.showAsDropDown(anchor, xoff, yoff, gravity);
+            super.showAsDropDown(anchor, xOff, yOff, gravity);
             // 窗口内部更新，以便仍显示在指定位置上
             innerWindowUpdate();
+            lastParentView = anchor;
         }
     }
 
@@ -515,6 +522,42 @@ public class TscViewEditorPopupWindow extends TscPopupWindow implements IEventSu
             textObjectId.setLayoutParams(viewHelper.createParamsWithMargin(ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT));
             textObjectId.setGravity(Gravity.CENTER);
+            textObjectId.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    updaterList.add(new ViewUpdaterAndEventConsumer() {
+                        @Override
+                        public void update() {
+
+                        }
+
+                        @Override
+                        public boolean onReceiveEvent(BaseEvent event) {
+                            if (event.getEventType() == ViewModelEditRequest) {
+                                ViewModelEditRequestEvent e = (ViewModelEditRequestEvent) event;
+                                if (e.getViewInterface() == childInterface)
+                                    lastParentView.post(() -> Toast.makeText(context,
+                                            LocalStrings.Cannot_select_itself_as_reference_object, Toast.LENGTH_SHORT).show());
+                                else if (parentInterface.getDeployer().getBoundViewsInterface(childInterface,
+                                        EecInputViewDeployer.BindType.WeakBindChild).contains(e.getViewInterface())) {
+                                    lastParentView.post(() -> Toast.makeText(context,
+                                            LocalStrings.Cannot_select_children_as_reference_object, Toast.LENGTH_SHORT).show());
+                                } else {
+                                    targetBindInfo.referenceId = e.getViewInterface().getModel().getId();
+                                    lastParentView.post(() -> {
+                                        showAtLocation(lastParentView, 0, 0, 0);
+                                        appliedModify();
+                                    });
+                                    updaterList.remove(this);
+                                }
+                                return true;
+                            }
+                            return false;
+                        }
+                    });
+                    dismiss();
+                }
+            });
             refContainer.addView(textObjectId);
 
             // 约束类型容器

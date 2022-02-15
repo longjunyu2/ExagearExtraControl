@@ -83,6 +83,8 @@ public class LocalStrings {
     public static String Post;
     public static String Next;
     public static String Keyboard_View_Test;
+    public static String Cannot_select_itself_as_reference_object;
+    public static String Cannot_select_children_as_reference_object;
 
     public static void initialize(Lang lang) {
         switch (lang) {
@@ -162,6 +164,8 @@ public class LocalStrings {
         Post = "发送";
         Next = "下一个";
         Keyboard_View_Test = "键盘控件测试";
+        Cannot_select_itself_as_reference_object = "不能选择自身为参考对象";
+        Cannot_select_children_as_reference_object = "不能选择存在参考关系的子对象为参考对象";
     }
 
     private static void initForEnglish() {
@@ -231,6 +235,8 @@ public class LocalStrings {
         Post = "Post";
         Next = "Next";
         Keyboard_View_Test = "Keyboard View Test";
+        Cannot_select_itself_as_reference_object = "Cannot select itself as reference object";
+        Cannot_select_children_as_reference_object = "Cannot select children as reference object";
     }
 
     public static Lang getLangFormLocalName(String str) {
